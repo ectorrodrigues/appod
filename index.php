@@ -10,7 +10,7 @@
 
   function add_gimlet_episodes(){
 
-    $html = file_get_html('https://gimletmedia.com/shows/heavyweight/episodes#show-tab-picker');
+    $html = file_get_html('https://gimletmedia.com/shows/reply-all/episodes#show-tab-picker');
     $conn	= db();
 
     foreach($html->find('.episode-card') as $title) {
@@ -44,7 +44,7 @@
       $query->execute();
 
       if($query->rowCount() == 0){
-        $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '1', '1', '1', '0')");
+        $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '2', '1', '1', '0')");
         $addurl->execute();
       }
 
@@ -108,7 +108,7 @@
 
 
 
-      $query	= $conn->prepare(" SELECT * FROM episode WHERE id_podcast = '$id' AND status = '0' AND id_user = '2' ");
+      $query	= $conn->prepare(" SELECT * FROM episode WHERE id_podcast = '$id' AND status = '0' AND id_user = '1' ");
       $query->execute();
       $rowcount = $query->rowCount();
 

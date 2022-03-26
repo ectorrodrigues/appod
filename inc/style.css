@@ -30,8 +30,9 @@ body{
 
 .flag-to-listen{
   background-color: #ED0851;
-  width: 27px;
+  min-width: 27px;
   height: 27px;
+  padding: 0 3px 6px 3px;
   border-radius:13px;
   text-align: center;
   display: inline-block;
