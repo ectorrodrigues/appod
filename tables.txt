@@ -1,0 +1,19 @@
+episode
+id | title | url | date_publish | date_added | id_podcast | id_publisher | id_user | status
+
+
+
+user
+id | title | password
+
+
+publisher
+id | title
+
+
+podcast
+id | title | id_publisher
+
+
+feed
+id | id_user | title_episode | id_publisher | status

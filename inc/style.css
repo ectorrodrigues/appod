@@ -1,0 +1,40 @@
+body{
+  background-color: #111114;
+  color:#eee;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 16px;
+}
+
+.status-circle{
+  width: 40px;
+  height: 40px;
+  border:solid 1px #555;
+  border-radius: 20px;
+  color:#333;
+  font-size: 20px;
+  text-align: center;
+  padding-top:5px;
+  cursor: pointer;
+}
+
+.aside{
+  border-right:solid 1px #555;
+}
+
+.podcasts_menu_items{
+  border-bottom:solid 1px #555;
+  padding: 15px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.flag-to-listen{
+  background-color: #ED0851;
+  width: 27px;
+  height: 27px;
+  border-radius:13px;
+  text-align: center;
+  display: inline-block;
+  color:#111114;
+  font-weight: 700;
+}
