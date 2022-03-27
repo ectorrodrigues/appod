@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Tempo de geração: 26/03/2022 às 05:10
+-- Tempo de geração: 27/03/2022 às 03:02
 -- Versão do servidor: 5.7.34
 -- Versão do PHP: 7.4.21
 
@@ -44,10 +44,10 @@ CREATE TABLE `episode` (
 --
 
 INSERT INTO `episode` (`id`, `title`, `url`, `date_publish`, `date_added`, `id_podcast`, `id_publisher`, `id_user`, `status`) VALUES
-(281, ' #43 Maura           ', 'https://open.spotify.com/embed/episode/0M6rYBfxT793Jz7XV466eE', '2021-12-16', '2022-03-25', 1, 1, 1, 0),
-(282, ' #42 Mark           ', 'https://open.spotify.com/embed/episode/4stY381hQErlrE6fpYhOdE', '2021-12-09', '2022-03-25', 1, 1, 1, 0),
+(281, ' #43 Maura           ', 'https://open.spotify.com/embed/episode/0M6rYBfxT793Jz7XV466eE', '2021-12-16', '2022-03-25', 1, 1, 1, 1),
+(282, ' #42 Mark           ', 'https://open.spotify.com/embed/episode/4stY381hQErlrE6fpYhOdE', '2021-12-09', '2022-03-25', 1, 1, 1, 1),
 (283, ' #41 Barbara Wilson           ', 'https://open.spotify.com/embed/episode/3w8ixRAVatVyzg63Nf8NLr', '2021-11-18', '2022-03-25', 1, 1, 1, 0),
-(284, ' #40 Barbara Shutt           ', 'https://open.spotify.com/embed/episode/2BZrL9n11cbetRKfpSuAC9', '2021-11-18', '2022-03-25', 1, 1, 1, 0),
+(284, ' #40 Barbara Shutt           ', 'https://open.spotify.com/embed/episode/2BZrL9n11cbetRKfpSuAC9', '2021-11-18', '2022-03-25', 1, 1, 1, 1),
 (285, ' #39 Stephen           ', 'https://open.spotify.com/embed/episode/03Nep7Pgs1hTrDwcqy7dht', '2021-10-28', '2022-03-25', 1, 1, 1, 0),
 (286, ' #38 Justine           ', 'https://open.spotify.com/embed/episode/16yGTBn9IXaHkR9G9m9q0I', '2021-10-21', '2022-03-25', 1, 1, 1, 0),
 (287, ' #37 John           ', 'https://open.spotify.com/embed/episode/6QYP10F2Hwevc7XLdKGqT2', '2021-10-07', '2022-03-25', 1, 1, 1, 0),
@@ -70,8 +70,8 @@ INSERT INTO `episode` (`id`, `title`, `url`, `date_publish`, `date_added`, `id_p
 (304, ' #30 The Marshes           ', 'https://open.spotify.com/embed/episode/0IEbDo5NWHqHtkA8BEijl4', '2019-12-12', '2022-03-25', 1, 1, 1, 0),
 (305, ' #29 Elyse           ', 'https://open.spotify.com/embed/episode/4cravvuXyaeZxbP0I7yXMR', '2019-11-21', '2022-03-25', 1, 1, 1, 0),
 (306, ' #28 Dr. Muller           ', 'https://open.spotify.com/embed/episode/2lV7SJiUiCtBAGBY91KMaF', '2019-11-07', '2022-03-25', 1, 1, 1, 0),
-(307, ' #27 Scott           ', 'https://open.spotify.com/embed/episode/3ZBwxPjR3OxCThz3PEkVyI', '2019-10-24', '2022-03-25', 1, 1, 1, 0),
-(308, ' #26 Beverley and Van           ', 'https://open.spotify.com/embed/episode/1i0lq4KRorbmqZY2Xeo2Q0', '2019-10-10', '2022-03-25', 1, 1, 1, 0),
+(307, ' #27 Scott           ', 'https://open.spotify.com/embed/episode/3ZBwxPjR3OxCThz3PEkVyI', '2019-10-24', '2022-03-25', 1, 1, 1, 1),
+(308, ' #26 Beverley and Van           ', 'https://open.spotify.com/embed/episode/1i0lq4KRorbmqZY2Xeo2Q0', '2019-10-10', '2022-03-25', 1, 1, 1, 1),
 (309, ' #25 Becky and Jo           ', 'https://open.spotify.com/embed/episode/3xTzU8lcNdFVoaK4fwCgj2', '2019-10-03', '2022-03-25', 1, 1, 1, 0),
 (310, ' #24 Jimmy and Mark           ', 'https://open.spotify.com/embed/episode/6szrriPwbHodLLv9bUcJPP', '2019-09-26', '2022-03-25', 1, 1, 1, 0),
 (311, ' #23 Alex           ', 'https://open.spotify.com/embed/episode/342vSTJhgIVas4ve1nUyCH', '2018-12-13', '2022-03-25', 1, 1, 1, 0),
@@ -97,7 +97,7 @@ INSERT INTO `episode` (`id`, `title`, `url`, `date_publish`, `date_added`, `id_p
 (331, ' #4 Tony           ', 'https://open.spotify.com/embed/episode/3bOBw2rcYr1zcazpuRNOC2', '2016-10-11', '2022-03-25', 1, 1, 1, 0),
 (333, ' #2 Gregor           ', 'https://open.spotify.com/embed/episode/6LKrLVEAY3tsqHPURec6ke', '2016-09-24', '2022-03-25', 1, 1, 1, 0),
 (335, ' Trailer           ', 'https://open.spotify.com/embed/episode/3OcMTqDu5RyFqzUn4zo5Ww', '2016-09-03', '2022-03-25', 1, 1, 1, 0),
-(336, ' #3 Tara           ', 'https://open.spotify.com/embed/episode/7LMLJrRwxlM0SjXQMZKm02', '2016-10-04', '2022-03-25', 1, 1, 2, 1),
+(336, ' #3 Tara           ', 'https://open.spotify.com/embed/episode/7LMLJrRwxlM0SjXQMZKm02', '2016-10-04', '2022-03-25', 1, 1, 2, 0),
 (337, ' #1 Buzz           ', 'https://open.spotify.com/embed/episode/68kq3bNz6hEuq8NtdfwERG', '2016-09-23', '2022-03-25', 1, 1, 2, 1);
 
 -- --------------------------------------------------------
@@ -132,7 +132,8 @@ CREATE TABLE `podcast` (
 --
 
 INSERT INTO `podcast` (`id`, `title`, `id_publisher`, `id_user`) VALUES
-(1, 'heavyweight', 1, 1);
+(1, 'Heavyweight', 1, 1),
+(2, 'Reply All', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -215,7 +216,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT de tabela `episode`
 --
 ALTER TABLE `episode`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=338;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1206;
 
 --
 -- AUTO_INCREMENT de tabela `feed`
@@ -227,7 +228,7 @@ ALTER TABLE `feed`
 -- AUTO_INCREMENT de tabela `podcast`
 --
 ALTER TABLE `podcast`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de tabela `publisher`
