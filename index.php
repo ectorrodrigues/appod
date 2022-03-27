@@ -52,7 +52,8 @@
           }
           echo '</select>';
 
-          echo '<a href="add_podcast.php?func=add_podcast&id_podcast=2&id_user=1&id_publisher='.$id_publisher.'" class="ml-2 button">+ add</a>';
+          // PEGAR O ID DO PODCAST DINAMICAMENTE
+          echo '<a href="add_podcast.php?func=add_podcast&id_podcast=1&id_user=1&id_publisher='.$id_publisher.'" class="ml-2 button">+ add</a>';
           $conn	= NULL;
         ?>
 
