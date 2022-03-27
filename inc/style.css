@@ -2,7 +2,7 @@ body{
   background-color: #111114;
   color:#eee;
   font-family: 'Titillium Web', sans-serif;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .status-circle{
@@ -11,7 +11,7 @@ body{
   border:solid 1px #555;
   border-radius: 20px;
   color:#333;
-  font-size: 20px;
+  font-size: 1.2em;
   text-align: center;
   padding-top:5px;
   cursor: pointer;
@@ -24,7 +24,7 @@ body{
 .podcasts_menu_items{
   border-bottom:solid 1px #555;
   padding: 15px;
-  font-size: 18px;
+  font-size: 1em;
   cursor: pointer;
 }
 
@@ -32,7 +32,7 @@ body{
   background-color: #ED0851;
   min-width: 27px;
   height: 27px;
-  padding: 0 3px 6px 3px;
+  padding: 2px 3px 6px 3px;
   border-radius:13px;
   text-align: center;
   display: inline-block;
@@ -40,25 +40,31 @@ body{
   font-weight: 700;
 }
 
-select{
+select, input[type='text'], input[type='password']{
   appearance:none;
   -webkit-appearance:none;
-  background-color: #111114;
+  background-color: #111114 !important;
   color:#eee;
   padding: 8px 15px;
   border-radius: 20px;
 }
 
+input{
+  background-color: #111114 !important;
+  color:#eee !important;
+  border:solid 1px #555;
+}
+
 .button{
   width: auto;
   text-align: center;
-  font-size:18px;
-  border-radius: 8px;
+  font-size:1em;
+  border-radius: 12px;
   background-color: #888;
   color: #fff;
-  border:solid 1px #555;
+  border:none;
   margin: auto;
-  padding: 5px 10px;
+  padding: 7px 10px;
 
   background: rgb(150,0,206);
   background: linear-gradient(220deg, rgba(150,0,206,1) 0%, rgba(0,212,255,1) 100%);
@@ -66,10 +72,40 @@ select{
 
 .button:hover{
   text-decoration: none;
-  color:#000;
   font-weight: 700;
+  background: rgb(150,0,206);
+  background: linear-gradient(51deg, rgba(150,0,206,1) 0%, rgba(0,212,255,1) 100%);
+  color:#000;
 }
 
 .bottom-line{
   border-bottom:solid 1px #555;
+}
+
+.transition{
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	-ms-transition: all 0.5s;
+	-o-transition: all 0.5s;
+	transition: all 0.5s;
+}
+
+.red{
+  background-color: #ED0851;
+  background: #ED0851 !important;
+}
+
+.red-text{
+  color: #ED0851;
+}
+
+
+
+.logout{
+  cursor:pointer;
+}
+
+.logout:hover{
+  color:#fff;
+  text-decoration: none;
 }

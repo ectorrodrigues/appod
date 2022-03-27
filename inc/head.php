@@ -38,3 +38,9 @@
     <title>Appod</title>
 
 </head>
+
+<?php
+  if(isset($_COOKIE['login'])) {
+    $user_id = $_COOKIE['login'];
+  }
+?>

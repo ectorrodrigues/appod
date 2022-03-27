@@ -3,7 +3,7 @@
 include('vendor/simplehtmldom/simple_html_dom.php');
 include('inc/database.php');
 
-function add_gimlet_episodes($id_podcast){
+function add_gimlet_episodes($id_podcast, $user_id){
 
   $conn	= db();
 
@@ -13,7 +13,7 @@ function add_gimlet_episodes($id_podcast){
     $id_publisher = $row['id_publisher'];
     $url = $row['url'];
 
-    $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '1') ");
+    $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
     $query->execute();
 
   }
@@ -35,8 +35,6 @@ function add_gimlet_episodes($id_podcast){
       if($i != 100){
         $titles[] = $item_title;
       }
-
-      //Presenting: Heavyweight > error on replyall
 
       $i++;
   }
@@ -68,45 +66,41 @@ function add_gimlet_episodes($id_podcast){
   $arrlenght = count($titles);
   $today = date("Y-m-d");
 
-
-
   for($i = 0; $i < $arrlenght; $i++){
 
-    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' ");
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
 
     if($query->rowCount() == 0){
-      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '1', '1', '0')");
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '1', '$user_id', '0')");
       $addurl->execute();
     }
 
   }
 
-
-
-
-
-
   $conn	= NULL;
-
 
 }
 
 
 // See if a func was sent
-if(isset($_GET['func'])){
+if(isset($_POST['func'])){
 
-  $func = $_GET['func'];
+  $func = $_POST['func'];
 
   // Get the func
   if($func == 'add_podcast'){
 
     // Check the publisher
-    $id_publisher = $_GET['id_publisher'];
+    $parameters = $_POST['podcasts_select'];
+    $parameters = explode("-",$parameters);
+
+    $id_publisher = $parameters[1];
 
     if($id_publisher == '1'){
-      $id_podcast = $_GET['id_podcast'];
-      add_gimlet_episodes($id_podcast);
+      $id_podcast = $parameters[0];
+      $user_id = $_POST['user_id'];
+      add_gimlet_episodes($id_podcast, $user_id);
     }
 
   }

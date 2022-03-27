@@ -6,21 +6,27 @@
 
   include('inc/database.php');
 
-
   function podcasts_menu(){
+
+    if(isset($_COOKIE['login'])) {
+      $id_user = $_COOKIE['login'];
+    } else {
+      $id_user = '10000000000';
+    }
+
     $conn	= db();
 
-    foreach($conn->query(" SELECT * FROM podcast WHERE id_user = '1' ") as $row) {
+    foreach($conn->query(" SELECT * FROM podcast WHERE id_user = '$id_user' ") as $row) {
       $id = $row['id'];
       $title = $row['title'];
       $id_publisher = $row['id_publisher'];
 
-      $query	= $conn->prepare(" SELECT * FROM episode WHERE id_podcast = '$id' AND status = '0' AND id_user = '1' ");
+      $query	= $conn->prepare(" SELECT * FROM episode WHERE id_podcast = '$id' AND status = '0' AND id_user = '$id_user' ");
       $query->execute();
       $rowcount = $query->rowCount();
 
       echo '
-      <div class="podcasts_menu_items row" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\')">
+      <div class="podcasts_menu_items row" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\')">
         <div class="col-10">
           '.$title.'
         </div>
@@ -39,25 +45,38 @@
 
   <div class="container-fluid">
     <div class="row p-3 bottom-line">
+      <div class="col-4">
+        <form action="model.php" method="post" enctype="multipart/form-data">
+          <?php
+            $conn	= db();
 
-        <?php
-          $conn	= db();
+            echo '<select class="podcasts_select col-6" name="podcasts_select">';
+            echo '<option value="">Choose a podcast to add</option>';
+            foreach($conn->query("SELECT * FROM podcast WHERE id_user = '0' ") as $row) {
+              $id = $row['id'];
+              $title = $row['title'];
+              $id_publisher = $row['id_publisher'];
+              echo '<option value="'.$id.'-'.$id_publisher.'-1">'.$title.'</option>';
+            }
+            echo '</select>';
 
-          echo '<select class="podcasts_select col-2" name="podcasts_select">';
-          foreach($conn->query("SELECT * FROM podcast WHERE id_user = '0' ") as $row) {
-            $id = $row['id'];
-            $title = $row['title'];
-            $id_publisher = $row['id_publisher'];
-            echo '<option value="'.$id.'">'.$title.'</value>';
-          }
-          echo '</select>';
-
-          // PEGAR O ID DO PODCAST DINAMICAMENTE
-          echo '<a href="add_podcast.php?func=add_podcast&id_podcast=1&id_user=1&id_publisher='.$id_publisher.'" class="ml-2 button">+ add</a>';
-          $conn	= NULL;
-        ?>
-
+            $conn	= NULL;
+          ?>
+          <input type="hidden" name="func" value="add_podcast">
+          <input type="hidden" name="user_id" value="<?= $user_id ?>">
+          <input type="submit" class="button transition" name="submit" value="+ add">
+        </form>
+      </div>
+      <div class="col-8 text-right">
+          <span class="message red-text mr-2"></span>
+          <input type="text" name="user" class="mr-2 d-inline-block" placeholder="user" id="user" value="">
+          <input type="password" name="password" class="mr-2 d-inline-block" placeholder="password" id="password" value="">
+          <input type="submit" class="button transition d-inline-block mr-2" name="login" value="login" onClick="login('login')"> or &nbsp;
+          <input type="submit" class="button transition d-inline-block red" name="newuser"  value="newuser" onClick="login('newuser')">
+          <span class="red-text ml-2 logout" onClick="login('logout')">logout</span>
+      </div>
     </div>
+
     <div class="row">
       <div class="col-3 aside">
         <?php podcasts_menu(); ?>
@@ -68,23 +87,18 @@
 
   </div>
 
-
-
 <script type="text/javascript">
-
 
     function status_switch(status_id, id_podcast){
 
       var request = $.ajax({
-        url: "functions.php",
+        url: "model.php",
         type: "POST",
         data: {id : status_id, func : 'status_switch'},
         dataType: "html"
       });
 
       request.done(function(msg) {
-        //$("#log").html( msg );
-        //var msgsplit = msg.split('|');
         var podcast_flag_value = $(".podcast_flag_"+id_podcast).html();
 
         if(msg == '1'){
@@ -113,7 +127,6 @@
 
         }
 
-
       });
 
       request.fail(function(jqXHR, textStatus) {
@@ -122,13 +135,12 @@
 
     }
 
-
-    function list_episodes(id_podcast, id_publisher_post){
+    function list_episodes(id_podcast, id_publisher_post, user_id){
 
       var request = $.ajax({
         url: "model.php",
         type: "POST",
-        data: {id : id_podcast, func : 'list_episodes', id_publisher : id_publisher_post},
+        data: {id : id_podcast, func : 'list_episodes', id_publisher : id_publisher_post, user : user_id},
         dataType: "html"
       });
 
@@ -143,8 +155,33 @@
     }
 
 
+    $( document ).ready(function() {
+        console.log( "ready!" );
+    });
+
+    function login(action){
+
+      var user_get = $('#user').val();
+      var password_get =  $('#password').val();
+
+      var request = $.ajax({
+        url: "model.php",
+        type: "POST",
+        data: {user : user_get, password : password_get, action_send : action, func : 'user'},
+        dataType: "html"
+      });
+
+      request.done(function(msg) {
+        $(".message").html(msg);
+        setTimeout(function(){location.reload();}, 1500);
+      });
+
+      request.fail(function(jqXHR, textStatus) {
+        alert( "Request failed: " + textStatus );
+      });
+
+    }
 
 </script>
-
 
 </body>
