@@ -4,7 +4,7 @@ include('inc/database.php');
 function list_gimlet_episodes($id_podcast_post){
 
   $conn	= db();
-  foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '2'") as $row) {
+  foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '1' LIMIT 10") as $row) {
     $id = $row['id'];
     $url = $row['url'];
     $status = $row['status'];

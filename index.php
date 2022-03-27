@@ -10,12 +10,10 @@
   function podcasts_menu(){
     $conn	= db();
 
-    foreach($conn->query("SELECT * FROM podcast WHERE id_user = '1' ") as $row) {
+    foreach($conn->query(" SELECT * FROM podcast WHERE id_user = '1' ") as $row) {
       $id = $row['id'];
       $title = $row['title'];
       $id_publisher = $row['id_publisher'];
-
-
 
       $query	= $conn->prepare(" SELECT * FROM episode WHERE id_podcast = '$id' AND status = '0' AND id_user = '1' ");
       $query->execute();
@@ -40,7 +38,23 @@
   ?>
 
   <div class="container-fluid">
-    <div class="row">
+    <div class="row p-3 bottom-line">
+
+        <?php
+          $conn	= db();
+
+          echo '<select class="podcasts_select col-2" name="podcasts_select">';
+          foreach($conn->query("SELECT * FROM podcast WHERE id_user = '0' ") as $row) {
+            $id = $row['id'];
+            $title = $row['title'];
+            $id_publisher = $row['id_publisher'];
+            echo '<option value="'.$id.'">'.$title.'</value>';
+          }
+          echo '</select>';
+
+          echo '<a href="add_podcast.php?func=add_podcast&id_podcast=2&id_user=1&id_publisher='.$id_publisher.'" class="ml-2 button">+ add</a>';
+          $conn	= NULL;
+        ?>
 
     </div>
     <div class="row">
