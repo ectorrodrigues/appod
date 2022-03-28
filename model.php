@@ -88,13 +88,13 @@ if(isset($_POST['func'])){
     // Check the publisher
     $parameters = $_POST['podcasts_select'];
     $parameters = explode("-",$parameters);
-
     $id_publisher = $parameters[1];
+    $id_podcast = $parameters[0];
+    $user_id = $_POST['user_id'];
+
 
     // IF GIMLET
     if($id_publisher == '1'){
-      $id_podcast = $parameters[0];
-      $user_id = $_POST['user_id'];
 
       include('vendor/simplehtmldom/simple_html_dom.php');
 
@@ -151,7 +151,7 @@ if(isset($_POST['func'])){
           $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
           $query->execute();
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '1', '$user_id', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -160,10 +160,84 @@ if(isset($_POST['func'])){
 
       }
 
-      add_gimlet_episodes($id_podcast, $user_id);
-      header("Location:http://localhost:8888/appod/");
+    } else if($id_publisher == '2'){
+
+      include('vendor/simplehtmldom/simple_html_dom.php');
+
+      function add_b9_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+        $html = file_get_html($url);
+
+        $i = 0;
+        $titlesarr = array();
+        foreach($html->find('.e3ZUqe') as $title) {
+          $titlesarr[] = $title;
+          $titlesarrstr = strval($titlesarr[$i]);
+          $titles[] = $titlesarrstr;
+          $i++;
+        }
+        //print_r($titles);
+
+        $i = 0;
+        $dateepsarr = array();
+        foreach($html->find('.oD3fme') as $dateep) {
+          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+          $finaldate = strtotime($item_dateep);
+          $finaldate = date('Y-m-d',$finaldate);
+          $dateeps[] = $finaldate;
+          $i++;
+        }
+        //print_r($dateeps);
+
+        $i = 0;
+        foreach($html->find('div[jsdata]') as $title) {
+          $title_get =  $title->jsdata;
+          $title_get = explode(";",$title_get);
+          $audiourls[] = $title_get[1];
+        }
+        //print_r($audiourls);
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
+            $addurl->execute();
+          }
+        }
+
+        $conn	= NULL;
+
+      }
 
     }
+
+    if($id_publisher == '1'){
+      add_gimlet_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '2'){
+      add_b9_episodes($id_podcast, $user_id);
+    }
+
+
+    header("Location:http://localhost:8888/appod/");
 
 
     // USER MANAGEMENT ------------------------------------------------------------------------------------------
@@ -211,7 +285,6 @@ if(isset($_POST['func'])){
           $passfetch = $query->fetchColumn();
         } else {
           echo 'user not found.';
-          die();
         }
         // ENCRYPT PASSWORD AND CHECK IF IT MATCHES THE HASHED PASSWORD STORED ON DATABASE
         foreach($conn->query("SELECT * FROM user WHERE title = '$user' ") as $row) {
