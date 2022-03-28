@@ -11,9 +11,10 @@ if(isset($_POST['func'])){
 
     // Check the publisher
     $id_publisher = $_POST['id_publisher'];
+    $id_podcast_post = $_POST['id'];
+    $id_user = $_POST['user'];
+
     if($id_publisher == '1'){
-      $id_podcast_post = $_POST['id'];
-      $id_user = $_POST['user'];
 
       function list_gimlet_episodes($id_podcast_post, $id_user){
 
@@ -48,10 +49,104 @@ if(isset($_POST['func'])){
           ';
         }
         $conn	= NULL;
-
       }
 
       list_gimlet_episodes($id_podcast_post, $id_user);
+
+    } else if ($id_publisher == '2'){
+
+      function list_b9_episodes($id_podcast_post, $id_user){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+
+      list_b9_episodes($id_podcast_post, $id_user);
+
+    } else if ($id_publisher == '3'){
+
+      function list_jovemnerd_episodes($id_podcast_post, $id_user){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+
+      list_jovemnerd_episodes($id_podcast_post, $id_user);
+
     }
 
     // STATUS SWITCH ------------------------------------------------------------------------------------------
@@ -180,13 +275,9 @@ if(isset($_POST['func'])){
         $id_podcast_fetch = $query->fetchColumn();
         $html = file_get_html($url);
 
-        $i = 0;
-        $titlesarr = array();
-        foreach($html->find('.e3ZUqe') as $title) {
-          $titlesarr[] = $title;
-          $titlesarrstr = strval($titlesarr[$i]);
-          $titles[] = $titlesarrstr;
-          $i++;
+        foreach($html->find('.LTUrYb') as $title) {
+          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+          $titles[] = $item_title;
         }
         //print_r($titles);
 
@@ -228,12 +319,78 @@ if(isset($_POST['func'])){
 
       }
 
+    } else if($id_publisher == '3'){
+
+      include('vendor/simplehtmldom/simple_html_dom.php');
+
+      function add_jovemnerd_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+        $html = file_get_html($url);
+
+        foreach($html->find('.LTUrYb') as $title) {
+          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+          $titles[] = $item_title;
+        }
+        //print_r($titles); die();
+
+        $i = 0;
+        $dateepsarr = array();
+        foreach($html->find('.oD3fme') as $dateep) {
+          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+          $finaldate = strtotime($item_dateep);
+          $finaldate = date('Y-m-d',$finaldate);
+          $dateeps[] = $finaldate;
+          $i++;
+        }
+        //print_r($dateeps); die();
+
+        $i = 0;
+        foreach($html->find('div[jsdata]') as $title) {
+          $title_get =  $title->jsdata;
+          $title_get = explode(";",$title_get);
+          $audiourls[] = $title_get[1];
+        }
+        //print_r($audiourls); die();
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
+            $addurl->execute();
+          }
+        }
+
+        $conn	= NULL;
+
+      }
+
     }
 
     if($id_publisher == '1'){
       add_gimlet_episodes($id_podcast, $user_id);
     } else if($id_publisher == '2'){
       add_b9_episodes($id_podcast, $user_id);
+    }else if($id_publisher == '3'){
+      add_jovemnerd_episodes($id_podcast, $user_id);
     }
 
 
