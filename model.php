@@ -147,6 +147,149 @@ if(isset($_POST['func'])){
 
       list_jovemnerd_episodes($id_podcast_post, $id_user);
 
+    } else if ($id_publisher == '4'){
+
+      function list_central3_episodes($id_podcast_post, $id_user){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+
+      list_central3_episodes($id_podcast_post, $id_user);
+
+    }
+
+    else if ($id_publisher == '5'){
+
+      function list_halfdeaf_episodes($id_podcast_post, $id_user){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+
+      list_halfdeaf_episodes($id_podcast_post, $id_user);
+
+    } else if ($id_publisher == '6'){
+
+      function list_wnyc_episodes($id_podcast_post, $id_user){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+
+      list_wnyc_episodes($id_podcast_post, $id_user);
+
     }
 
     // STATUS SWITCH ------------------------------------------------------------------------------------------
@@ -383,6 +526,194 @@ if(isset($_POST['func'])){
 
       }
 
+    } else if($id_publisher == '4'){
+
+      include('vendor/simplehtmldom/simple_html_dom.php');
+
+      function add_central3_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+        $html = file_get_html($url);
+
+        foreach($html->find('.LTUrYb') as $title) {
+          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+          $titles[] = $item_title;
+        }
+        //print_r($titles); die();
+
+        $i = 0;
+        $dateepsarr = array();
+        foreach($html->find('.oD3fme') as $dateep) {
+          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+          $finaldate = strtotime($item_dateep);
+          $finaldate = date('Y-m-d',$finaldate);
+          $dateeps[] = $finaldate;
+          $i++;
+        }
+        //print_r($dateeps); die();
+
+        $i = 0;
+        foreach($html->find('div[jsdata]') as $title) {
+          $title_get =  $title->jsdata;
+          $title_get = explode(";",$title_get);
+          $audiourls[] = $title_get[1];
+        }
+        //print_r($audiourls); die();
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
+            $addurl->execute();
+          }
+        }
+
+        $conn	= NULL;
+
+      }
+
+    } else if($id_publisher == '5'){
+
+      // XML PARSING
+      function add_halfdeaf_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+        $xml = simplexml_load_file("$url");
+
+
+        foreach($xml->channel->item as $title) {
+          $title_get = $title->title;
+          $titles[] = strval($title_get);
+        }
+        //print_r($titles).'<br>';
+
+        foreach($xml->channel->item as $title) {
+          $dateep_get = $title->pubDate;
+          $finaldate = strtotime($dateep_get);
+          $finaldate = date('Y-m-d',$finaldate);
+          $dateeps[] = strval($finaldate);
+        }
+        //print_r($dateeps).'<br>';
+
+        $xml = simplexml_load_file("https://www.spreaker.com/show/3221921/episodes/feed");
+        foreach($xml->channel->item as $title) {
+          $audiourls_get = $title->enclosure->attributes();
+          $audiourls[] = strval($audiourls_get);
+        }
+        //print_r($audiourls).'<br>';
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
+            $addurl->execute();
+          }
+        }
+
+        $conn	= NULL;
+
+      }
+
+    } else if($id_publisher == '6'){
+
+      include('vendor/simplehtmldom/simple_html_dom.php');
+
+      function add_wnyc_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+        $html = file_get_html($url);
+
+        foreach($html->find('.LTUrYb') as $title) {
+          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+          $titles[] = $item_title;
+        }
+        //print_r($titles); die();
+
+        $i = 0;
+        $dateepsarr = array();
+        foreach($html->find('.oD3fme') as $dateep) {
+          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+          $finaldate = strtotime($item_dateep);
+          $finaldate = date('Y-m-d',$finaldate);
+          $dateeps[] = $finaldate;
+          $i++;
+        }
+        //print_r($dateeps); die();
+
+        $i = 0;
+        foreach($html->find('div[jsdata]') as $title) {
+          $title_get =  $title->jsdata;
+          $title_get = explode(";",$title_get);
+          $audiourls[] = $title_get[1];
+        }
+        //print_r($audiourls); die();
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
+            $addurl->execute();
+          }
+        }
+
+        $conn	= NULL;
+
+      }
+
     }
 
     if($id_publisher == '1'){
@@ -391,7 +722,15 @@ if(isset($_POST['func'])){
       add_b9_episodes($id_podcast, $user_id);
     }else if($id_publisher == '3'){
       add_jovemnerd_episodes($id_podcast, $user_id);
+    }else if($id_publisher == '4'){
+      add_central3_episodes($id_podcast, $user_id);
+    }else if($id_publisher == '5'){
+      add_halfdeaf_episodes($id_podcast, $user_id);
+    }else if($id_publisher == '6'){
+      add_wnyc_episodes($id_podcast, $user_id);
     }
+
+
 
 
     header("Location:http://localhost:8888/appod/");
