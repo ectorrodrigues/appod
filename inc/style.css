@@ -99,13 +99,36 @@ input{
   color: #ED0851;
 }
 
-
-
 .logout{
   cursor:pointer;
+  font-size: 13px;
 }
 
 .logout:hover{
-  color:#fff;
+  color:#0dd;
   text-decoration: none;
+}
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+.modalscreen{
+  position: absolute;
+  z-index: 1000;
+  margin-left: 33.3%;
+  margin-top:10%;
+  padding: 80px 100px;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #222;
+  border:solid 1px #999;
+}
+
+.remove-yes:hover{
+  color: #ED0851;
+}
+
+.remove-no:hover{
+  color:#0dd;
 }

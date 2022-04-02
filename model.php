@@ -13,13 +13,22 @@ if(isset($_POST['func'])){
     $id_publisher = $_POST['id_publisher'];
     $id_podcast_post = $_POST['id'];
     $id_user = $_POST['user'];
+    $limit = $_POST['limit'];
+
+    echo '
+    <div class="row justify-content-end mb-3 mt-1">
+      <div class="col-12 text-right">
+        <span onclick="remove(\''.$id_podcast_post.'\', \''.$id_user.'\')" class="cursor-pointer">remove podcast</span>
+        <span class="ml-4 cursor-pointer" onclick="markall(\''.$id_podcast_post.'\', \''.$id_user.'\')">mark all as listened</span>
+      </div>
+    </div>';
 
     if($id_publisher == '1'){
 
-      function list_gimlet_episodes($id_podcast_post, $id_user){
+      function list_gimlet_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -51,14 +60,14 @@ if(isset($_POST['func'])){
         $conn	= NULL;
       }
 
-      list_gimlet_episodes($id_podcast_post, $id_user);
+      list_gimlet_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '2'){
 
-      function list_b9_episodes($id_podcast_post, $id_user){
+      function list_b9_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -98,14 +107,14 @@ if(isset($_POST['func'])){
 
       }
 
-      list_b9_episodes($id_podcast_post, $id_user);
+      list_b9_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '3'){
 
-      function list_jovemnerd_episodes($id_podcast_post, $id_user){
+      function list_jovemnerd_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -145,14 +154,14 @@ if(isset($_POST['func'])){
 
       }
 
-      list_jovemnerd_episodes($id_podcast_post, $id_user);
+      list_jovemnerd_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '4'){
 
-      function list_central3_episodes($id_podcast_post, $id_user){
+      function list_central3_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -192,16 +201,16 @@ if(isset($_POST['func'])){
 
       }
 
-      list_central3_episodes($id_podcast_post, $id_user);
+      list_central3_episodes($id_podcast_post, $id_user, $limit);
 
     }
 
     else if ($id_publisher == '5'){
 
-      function list_halfdeaf_episodes($id_podcast_post, $id_user){
+      function list_halfdeaf_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -241,14 +250,14 @@ if(isset($_POST['func'])){
 
       }
 
-      list_halfdeaf_episodes($id_podcast_post, $id_user);
+      list_halfdeaf_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '6'){
 
-      function list_wnyc_episodes($id_podcast_post, $id_user){
+      function list_wnyc_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT 10") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -288,7 +297,7 @@ if(isset($_POST['func'])){
 
       }
 
-      list_wnyc_episodes($id_podcast_post, $id_user);
+      list_wnyc_episodes($id_podcast_post, $id_user, $limit);
 
     }
 
@@ -863,7 +872,48 @@ if(isset($_POST['func'])){
         //no button pressed
     }
 
+  } else if($func == 'markall'){
+
+    $id_podcast_post = $_POST['id'];
+    $id_user = $_POST['user'];
+
+    function markall($id_podcast_post, $id_user){
+      $conn	= db();
+      foreach($conn->query("UPDATE episode SET status = '1' WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
+      }
+
+      foreach($conn->query("SELECT id FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
+        echo $row['id'].',';
+      }
+    }
+
+    markall($id_podcast_post, $id_user);
+
+  } else if($func == 'remove'){
+
+    $id_podcast_post = $_POST['id'];
+    $id_user = $_POST['user'];
+
+    function remove($id_podcast_post, $id_user){
+      $conn	= db();
+
+
+      foreach($conn->query("DELETE FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
+      }
+      foreach($conn->query("DELETE FROM podcast WHERE id = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
+      }
+
+    }
+
+    remove($id_podcast_post, $id_user);
+
   }
+
+
+
+
+
+
 
 
 }
