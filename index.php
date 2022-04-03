@@ -177,7 +177,7 @@
 
       request.done(function(msg) {
         $(".message").html(msg);
-        setTimeout(function(){location.reload();}, 1000);
+        setTimeout(function(){location.reload();}, 500);
       });
 
       request.fail(function(jqXHR, textStatus) {
@@ -216,7 +216,6 @@
       var modalscreen = '<div class="modalscreen">Do you really want to remove this podcast from your feed?<br><div class="remove-yes d-inline-block cursor-pointer mx-5 mt-4" onclick="remove2(\''+id_podcast+'\', \''+id_user+'\')">yes</div><div class="remove-no d-inline-block cursor-pointer mx-5 mt-4" onclick="remove_esc()">no</div></div>';
       $("body").prepend(modalscreen);
     }
-
     function remove_esc(id_podcast, id_user){
       $(".modalscreen").hide();
     }
