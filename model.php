@@ -1849,10 +1849,11 @@ if(isset($_POST['func'])){
     function remove($id_podcast_post, $id_user){
       $conn	= db();
 
-      foreach($conn->query("DELETE FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
-      }
-      foreach($conn->query("DELETE FROM podcast WHERE id = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
-      }
+      $query = $conn->prepare("DELETE FROM podcast WHERE id = '$id_podcast_post' AND id_user = '$id_user'");
+      $query->execute();
+
+      $del = $conn->prepare("DELETE FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ");
+      $del->execute();
 
     }
 
