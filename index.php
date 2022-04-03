@@ -64,12 +64,12 @@
               echo '<div class="col-4 p-5">
                       <div class="publisher_title">'.$title_publisher.'</div>';
 
-              foreach($conn->query("SELECT * FROM podcast WHERE id_publisher = '$id_publisher' AND id_user = '0' ") as $row) {
+              foreach($conn->query("SELECT * FROM podcast WHERE id_publisher = '$id_publisher' AND id_user = '0'  ORDER BY title ASC ") as $row) {
                 $id_podcast = $row['id'];
                 $title_podcast = $row['title'];
                 echo '
                 <form action="model.php" method="post" enctype="multipart/form-data" class="podcasts-list">
-                  <select class="podcasts_select col-6" name="podcasts_select">
+                  <select class="podcasts_select col-10" name="podcasts_select">
                     <option value="'.$id_podcast.'-'.$id_publisher.'-1">'.$title_podcast.'</option>
                   </select>
                   <input type="hidden" name="func" value="add_podcast">
