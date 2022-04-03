@@ -34,8 +34,11 @@
 
     <link rel="canonical" href="http://localhost:8888/apod"/>
 
+    <link rel="apple-touch-icon" sizes="16x16" href="inc/favicon.ico">
+    <link rel="icon" type="image/png" sizes="96x96" href="inc/favicon-96x96.png">
 
-    <title>Appod</title>
+
+    <title>appod</title>
 
 </head>
 

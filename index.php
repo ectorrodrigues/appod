@@ -44,24 +44,49 @@
   ?>
 
   <div class="loading">
-    <i class="fa fa-spinner red-text" aria-hidden="true" style="position:absolute; font-size:40px; margin-top: 200px; margin-left:48%; z-index:900;"></i>
+    <i class="fa fa-spinner red-text" aria-hidden="true"></i>
   </div>
 
   <div class="fullscreen">
-    <div class="row justify-content-center">
+    <div class="row justify-content-start">
       <div class="col-12 text-left">
         <div class="row justify-content-end">
           <i class="fa fa-times-circle-o red-text text-right cursor-pointer transition" aria-hidden="true" onclick="closelist()"></i>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-start">
           <?php
             $conn	= db();
 
-            foreach($conn->query("SELECT * FROM publisher ORDER BY title ASC") as $row) {
+            foreach($conn->query("SELECT * FROM publisher WHERE id != '7' ORDER BY title ASC") as $row) {
               $id_publisher = $row['id'];
               $title_publisher = $row['title'];
 
-              echo '<div class="col-4 p-5">
+              echo '<div class="col-lg-4 col-12 p-5">
+                      <div class="publisher_title">'.$title_publisher.'</div>';
+
+              foreach($conn->query("SELECT * FROM podcast WHERE id_publisher = '$id_publisher' AND id_user = '0'  ORDER BY title ASC ") as $row) {
+                $id_podcast = $row['id'];
+                $title_podcast = $row['title'];
+                echo '
+                <form action="model.php" method="post" enctype="multipart/form-data" class="podcasts-list">
+                  <select class="podcasts_select col-10" name="podcasts_select">
+                    <option value="'.$id_podcast.'-'.$id_publisher.'-1">'.$title_podcast.'</option>
+                  </select>
+                  <input type="hidden" name="func" value="add_podcast">
+                  <input type="hidden" name="user_id" value="'.$user_id.'">
+                  <input type="submit" class="button transition" name="submit" value="+">
+                </form>
+                ';
+              }
+
+              echo '</div>';
+            }
+
+            foreach($conn->query("SELECT * FROM publisher WHERE id = '7' ORDER BY title ASC") as $row) {
+              $id_publisher = $row['id'];
+              $title_publisher = $row['title'];
+
+              echo '<div class="col-lg-4 col-12 p-5">
                       <div class="publisher_title">'.$title_publisher.'</div>';
 
               foreach($conn->query("SELECT * FROM podcast WHERE id_publisher = '$id_publisher' AND id_user = '0'  ORDER BY title ASC ") as $row) {
@@ -91,8 +116,9 @@
 
   <div class="container-fluid">
 
-    <div class="row p-3 bottom-line">
-      <div class="col-4">
+    <div class="row p-3 bottom-line flex">
+
+      <div class="col-lg-4 col-12 text-lg-left text-center order-1 mt-lg-0 mt-3">
         <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline">
           <?php
             $conn	= db();
@@ -117,16 +143,18 @@
         <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="openlist()"><i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All</div>
 
       </div>
-      <div class="col-8 text-right">
+
+      <div class="col-lg-8 col-12 text-lg-right text-center mt-lg-0 mt-2 order-2">
         <span class="login-form">
-          <span class="message red-text mr-2"></span>
-          <input type="text" name="user" class="mr-2 d-inline-block" placeholder="user" id="user" value="">
-          <input type="password" name="password" class="mr-2 d-inline-block" placeholder="password" id="password" value="">
-          <input type="submit" class="button transition d-inline-block mr-2 btnlogin" name="login" value="login" onClick="login('login')"> or &nbsp;
-          <input type="submit" class="button transition d-inline-block red" name="newuser"  value="newuser" onClick="login('newuser')">
+          <span class="col-lg-3 col-12 message red-text mr-lg-2 mr-12"></span>
+          <input type="text" name="user" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12" placeholder="user" id="user" value="">
+          <input type="password" name="password" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12 mb-lg-0 mb-4 mt-lg-0 mt-3 " placeholder="password" id="password" value="">
+          <input type="submit" class="button transition d-inline-block mr-2 btnlogin mb-lg-0 mb-4" name="login" value="login" onClick="login('login')"> or &nbsp;
+          <input type="submit" class="button transition d-inline-block red mb-lg-0 mb-4" name="newuser"  value="newuser" onClick="login('newuser')">
         </span>
         <span class="ml-2 logout" onClick="login('logout')">logout</span>
       </div>
+
     </div>
 
     <div class="row">
@@ -146,6 +174,7 @@
         $('.fullscreen').hide();
         $('#episodes_container').hide();
         $('.loading').hide();
+        $('.logout').hide();
 
         $( ".btnlogin" ).click(function() {
           $('.loading').show();
@@ -179,7 +208,8 @@
             }
             else {
                   $('#episodes_container').show();
-                $('.login-form').hide();
+                  $('.login-form').hide();
+                  $('.logout').show();
             }
         }
 

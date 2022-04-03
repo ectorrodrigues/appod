@@ -101,7 +101,7 @@ input{
 
 .logout{
   cursor:pointer;
-  font-size: 13px;
+  font-size: 0.8em;
 }
 
 .logout:hover{
@@ -155,7 +155,7 @@ input{
 }
 
 .publisher_title{
-  font-size: 20px;
+  font-size: 1.2em;
   margin-bottom:-4px;
   color:#0dd;
   margin-top:0px;
@@ -165,7 +165,7 @@ input{
 }
 
 .fa-times-circle-o{
-  font-size: 24px;
+  font-size: 1.3em;
 }
 
 .fa-times-circle-o:hover{
@@ -177,7 +177,17 @@ input{
   color:#0dd;
 }
 
+.hover-blue:hover{
+  color:#0dd;
+}
+
 .fa-spinner{
+  position:absolute;
+  font-size:40px;
+  margin-top: 200px;
+  margin-left:48%;
+  z-index:900;
+
   animation-name: rotatespinner;
   animation-duration: 3s;
   animation-iteration-count:infinite;
@@ -195,4 +205,49 @@ input{
 @-webkit-keyframes rotatespinner {
   0% { transform: rotate(0deg);}
   100% { transform: rotate(360deg);}
+}
+
+.flex{
+}
+
+
+/* -------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
+**********************************************************************************************************
+                                         MOBILE STYLING
+**********************************************************************************************************
+----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------*/
+
+
+@media only screen and (min-device-width: 10px) and (max-device-width: 575px) {
+  body{
+    font-size:20px;
+  }
+
+  .message{
+    display: block !important;
+  }
+
+  .fullscreen{
+    height: 800%;
+  }
+
+  .order-1{
+    order: 2;
+  }
+
+  .order-2{
+    order: 1;
+  }
+
+  .logout{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .fa-spinner{
+    margin-top: 500px; 
+  }
 }
