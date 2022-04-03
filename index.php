@@ -125,7 +125,7 @@
 
             echo '<select class="podcasts_select col-6" name="podcasts_select">';
             echo '<option value="">Choose a podcast to add</option>';
-            foreach($conn->query("SELECT * FROM podcast WHERE id_user = '0' ") as $row) {
+            foreach($conn->query("SELECT * FROM podcast WHERE id_user = '0' ORDER BY title ASC ") as $row) {
               $id = $row['id'];
               $title = $row['title'];
               $id_publisher = $row['id_publisher'];
