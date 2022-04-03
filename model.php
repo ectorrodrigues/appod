@@ -1,26 +1,20 @@
 <?php
 include('inc/database.php');
-
 include('vendor/simplehtmldom/simple_html_dom.php');
+
 function update_gimlet_episodes($id_podcast, $user_id){
-
-
-
   $conn	= db();
-
   foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
     $title = $row['title'];
     $id_publisher = $row['id_publisher'];
     $url = $row['url'];
   }
-
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
   } else {
-
     foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
       $title = $row['title'];
       $id_publisher = $row['id_publisher'];
@@ -28,14 +22,11 @@ function update_gimlet_episodes($id_podcast, $user_id){
       $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
       $query->execute();
     }
-
     $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
     $query->execute();
     $id_podcast_fetch = $query->fetchColumn();
   }
-
   $html = file_get_html($url);
-
   $i = 0;
   foreach($html->find('.episode-card') as $title) {
     $item_title = $title->find('.episode-title', 0)->plaintext;
@@ -45,7 +36,6 @@ function update_gimlet_episodes($id_podcast, $user_id){
     $i++;
   }
   //print_r($titles);
-
   $i = 0;
   foreach($html->find('.episode-card') as $dateep) {
     $item_dateep = $dateep->find('.episode-date', 0)->plaintext;
@@ -57,7 +47,6 @@ function update_gimlet_episodes($id_podcast, $user_id){
     $i++;
   }
   //print_r($dateeps);
-
   $i = 0;
   foreach($html->find('div[class=listen-now]') as $element){
     $classurl = 'data-listen-now-player-url';
@@ -65,7 +54,6 @@ function update_gimlet_episodes($id_podcast, $user_id){
     $i++;
   }
   //print_r($audiourls);
-
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   for($i = 0; $i < $arrlenght; $i++){
@@ -77,23 +65,23 @@ function update_gimlet_episodes($id_podcast, $user_id){
       $query->execute();
     }
   }
-
-
   $conn	= NULL;
 
 }
 
-
-function update_jovemnerd_episodes($id_podcast, $user_id){
-
+function update_b9_episodes($id_podcast, $user_id){
   $conn	= db();
+  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+    $title = $row['title'];
+    $id_publisher = $row['id_publisher'];
+    $url = $row['url'];
+  }
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
   } else {
-
     foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
       $title = $row['title'];
       $id_publisher = $row['id_publisher'];
@@ -101,15 +89,11 @@ function update_jovemnerd_episodes($id_podcast, $user_id){
       $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
       $query->execute();
     }
-
     $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
     $query->execute();
     $id_podcast_fetch = $query->fetchColumn();
-
   }
-
   $html = file_get_html($url);
-
   foreach($html->find('.LTUrYb') as $title) {
     $item_title = $title->find('.e3ZUqe', 0)->plaintext;
     $titles[] = $item_title;
@@ -138,20 +122,278 @@ function update_jovemnerd_episodes($id_podcast, $user_id){
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
-
   for($i = 0; $i < $arrlenght; $i++){
-
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
-
     if($query->rowCount() == 0){
-      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
-      $addurl->execute();
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
+      $query	= $conn->prepare($sql);
+      $query->execute();
     }
   }
-
   $conn	= NULL;
+}
 
+function update_jovemnerd_episodes($id_podcast, $user_id){
+  $conn	= db();
+  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+    $title = $row['title'];
+    $id_publisher = $row['id_publisher'];
+    $url = $row['url'];
+  }
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  } else {
+    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+      $title = $row['title'];
+      $id_publisher = $row['id_publisher'];
+      $url = $row['url'];
+      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+      $query->execute();
+    }
+    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+    $query->execute();
+    $id_podcast_fetch = $query->fetchColumn();
+  }
+  $html = file_get_html($url);
+  foreach($html->find('.LTUrYb') as $title) {
+    $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+    $titles[] = $item_title;
+  }
+  //print_r($titles); die();
+
+  $i = 0;
+  $dateepsarr = array();
+  foreach($html->find('.oD3fme') as $dateep) {
+    $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+    $finaldate = strtotime($item_dateep);
+    $finaldate = date('Y-m-d',$finaldate);
+    $dateeps[] = $finaldate;
+    $i++;
+  }
+  //print_r($dateeps); die();
+
+  $i = 0;
+  foreach($html->find('div[jsdata]') as $title) {
+    $title_get =  $title->jsdata;
+    $title_get = explode(";",$title_get);
+    $audiourls[] = $title_get[1];
+  }
+  //print_r($audiourls); die();
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+  for($i = 0; $i < $arrlenght; $i++){
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+    if($query->rowCount() == 0){
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
+      $query	= $conn->prepare($sql);
+      $query->execute();
+    }
+  }
+  $conn	= NULL;
+}
+
+function update_central3_episodes($id_podcast, $user_id){
+  $conn	= db();
+  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+    $title = $row['title'];
+    $id_publisher = $row['id_publisher'];
+    $url = $row['url'];
+  }
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  } else {
+    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+      $title = $row['title'];
+      $id_publisher = $row['id_publisher'];
+      $url = $row['url'];
+      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+      $query->execute();
+    }
+    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+    $query->execute();
+    $id_podcast_fetch = $query->fetchColumn();
+  }
+  $html = file_get_html($url);
+  foreach($html->find('.LTUrYb') as $title) {
+    $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+    $titles[] = $item_title;
+  }
+  //print_r($titles); die();
+
+  $i = 0;
+  $dateepsarr = array();
+  foreach($html->find('.oD3fme') as $dateep) {
+    $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+    $finaldate = strtotime($item_dateep);
+    $finaldate = date('Y-m-d',$finaldate);
+    $dateeps[] = $finaldate;
+    $i++;
+  }
+  //print_r($dateeps); die();
+
+  $i = 0;
+  foreach($html->find('div[jsdata]') as $title) {
+    $title_get =  $title->jsdata;
+    $title_get = explode(";",$title_get);
+    $audiourls[] = $title_get[1];
+  }
+  //print_r($audiourls); die();
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+  for($i = 0; $i < $arrlenght; $i++){
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+    if($query->rowCount() == 0){
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
+      $query	= $conn->prepare($sql);
+      $query->execute();
+    }
+  }
+  $conn	= NULL;
+}
+
+function update_halfdeaf_episodes($id_podcast, $user_id){
+  $conn	= db();
+  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+    $title = $row['title'];
+    $id_publisher = $row['id_publisher'];
+    $url = $row['url'];
+  }
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  } else {
+    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+      $title = $row['title'];
+      $id_publisher = $row['id_publisher'];
+      $url = $row['url'];
+      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+      $query->execute();
+    }
+    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+    $query->execute();
+    $id_podcast_fetch = $query->fetchColumn();
+  }
+
+
+  $xml = simplexml_load_file("$url");
+
+
+  foreach($xml->channel->item as $title) {
+    $title_get = $title->title;
+    $titles[] = strval($title_get);
+  }
+  //print_r($titles).'<br>';
+
+  foreach($xml->channel->item as $title) {
+    $dateep_get = $title->pubDate;
+    $finaldate = strtotime($dateep_get);
+    $finaldate = date('Y-m-d',$finaldate);
+    $dateeps[] = strval($finaldate);
+  }
+  //print_r($dateeps).'<br>';
+
+  $xml = simplexml_load_file("$url");
+  foreach($xml->channel->item as $title) {
+    $audiourls_get = $title->enclosure->attributes();
+    $audiourls[] = strval($audiourls_get);
+  }
+  //print_r($audiourls).'<br>';
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+
+
+  for($i = 0; $i < $arrlenght; $i++){
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+    if($query->rowCount() == 0){
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
+      $query	= $conn->prepare($sql);
+      $query->execute();
+    }
+  }
+  $conn	= NULL;
+}
+
+function update_wnyc_episodes($id_podcast, $user_id){
+  $conn	= db();
+  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+    $title = $row['title'];
+    $id_publisher = $row['id_publisher'];
+    $url = $row['url'];
+  }
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  } else {
+    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+      $title = $row['title'];
+      $id_publisher = $row['id_publisher'];
+      $url = $row['url'];
+      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+      $query->execute();
+    }
+    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+    $query->execute();
+    $id_podcast_fetch = $query->fetchColumn();
+  }
+  $html = file_get_html($url);
+  foreach($html->find('.LTUrYb') as $title) {
+    $item_title = $title->find('.e3ZUqe', 0)->plaintext;
+    $titles[] = $item_title;
+  }
+  //print_r($titles); die();
+
+  $i = 0;
+  $dateepsarr = array();
+  foreach($html->find('.oD3fme') as $dateep) {
+    $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
+    $finaldate = strtotime($item_dateep);
+    $finaldate = date('Y-m-d',$finaldate);
+    $dateeps[] = $finaldate;
+    $i++;
+  }
+  //print_r($dateeps); die();
+
+  $i = 0;
+  foreach($html->find('div[jsdata]') as $title) {
+    $title_get =  $title->jsdata;
+    $title_get = explode(";",$title_get);
+    $audiourls[] = $title_get[1];
+  }
+  //print_r($audiourls); die();
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+  for($i = 0; $i < $arrlenght; $i++){
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+    if($query->rowCount() == 0){
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
+      $query	= $conn->prepare($sql);
+      $query->execute();
+    }
+  }
+  $conn	= NULL;
 }
 
 function update_podcasts($user_id){
@@ -161,8 +403,6 @@ function update_podcasts($user_id){
   $sql = "SELECT * FROM episode WHERE id_user = '$user_id'";
   foreach($conn->query($sql) as $row) {
     $podcast_title = $row['id_podcast'];
-    //$slug = array( ' '=>'-', 'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E', 'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Þ'=>'B', 'ß'=>'Ss', 'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'þ'=>'b' );
-    //$publisher_title = mb_strtolower(strtr( $publisher_title, $slug ));
     $podcast_arr[] = $podcast_title;
   }
 
@@ -183,23 +423,20 @@ function update_podcasts($user_id){
     if($query->rowCount() > 0){
       $id_publisher = $query->fetchColumn();
 
-      update_gimlet_episodes($podcast_id_fetch, $user_id);
-
-      /*
       if($id_publisher == '1'){
         update_gimlet_episodes($podcast_id_fetch, $user_id);
       } else if($id_publisher == '2'){
-        add_b9_episodes($podcast_id_fetch, $user_id);
+        update_b9_episodes($podcast_id_fetch, $user_id);
       }else if($id_publisher == '3'){
         update_jovemnerd_episodes($podcast_id_fetch, $user_id);
       }else if($id_publisher == '4'){
-        add_central3_episodes($podcast_id_fetch, $user_id);
+        update_central3_episodes($podcast_id_fetch, $user_id);
       }else if($id_publisher == '5'){
-        add_halfdeaf_episodes($podcast_id_fetch, $user_id);
+        update_halfdeaf_episodes($podcast_id_fetch, $user_id);
       }else if($id_publisher == '6'){
-        add_wnyc_episodes($podcast_id_fetch, $user_id);
+        update_wnyc_episodes($podcast_id_fetch, $user_id);
       }
-      */
+
     }
 
   }
@@ -265,7 +502,6 @@ if(isset($_POST['func'])){
         }
         $conn	= NULL;
       }
-
       list_gimlet_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '2'){
@@ -273,7 +509,7 @@ if(isset($_POST['func'])){
       function list_b9_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish LIMIT $limit") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -312,7 +548,6 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
-
       list_b9_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '3'){
@@ -320,7 +555,7 @@ if(isset($_POST['func'])){
       function list_jovemnerd_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish LIMIT $limit") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -359,7 +594,6 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
-
       list_jovemnerd_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '4'){
@@ -367,7 +601,7 @@ if(isset($_POST['func'])){
       function list_central3_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish LIMIT $limit") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -406,7 +640,6 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
-
       list_central3_episodes($id_podcast_post, $id_user, $limit);
 
     }
@@ -416,7 +649,7 @@ if(isset($_POST['func'])){
       function list_halfdeaf_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish LIMIT $limit") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -455,7 +688,6 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
-
       list_halfdeaf_episodes($id_podcast_post, $id_user, $limit);
 
     } else if ($id_publisher == '6'){
@@ -463,7 +695,7 @@ if(isset($_POST['func'])){
       function list_wnyc_episodes($id_podcast_post, $id_user, $limit){
 
         $conn	= db();
-        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish LIMIT $limit") as $row) {
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
@@ -502,7 +734,6 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
-
       list_wnyc_episodes($id_podcast_post, $id_user, $limit);
 
     }
@@ -531,7 +762,6 @@ if(isset($_POST['func'])){
       echo $switch;
 
     }
-
     status_switch_action();
 
     // ADD PODCAST ------------------------------------------------------------------------------------------
@@ -548,8 +778,6 @@ if(isset($_POST['func'])){
 
     // IF GIMLET
     if($id_publisher == '1'){
-
-      include('vendor/simplehtmldom/simple_html_dom.php');
 
       function add_gimlet_episodes($id_podcast, $user_id){
 
@@ -615,8 +843,6 @@ if(isset($_POST['func'])){
 
     } else if($id_publisher == '2'){
 
-      include('vendor/simplehtmldom/simple_html_dom.php');
-
       function add_b9_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -679,8 +905,6 @@ if(isset($_POST['func'])){
 
     } else if($id_publisher == '3'){
 
-      include('vendor/simplehtmldom/simple_html_dom.php');
-
       function add_jovemnerd_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -742,8 +966,6 @@ if(isset($_POST['func'])){
       }
 
     } else if($id_publisher == '4'){
-
-      include('vendor/simplehtmldom/simple_html_dom.php');
 
       function add_central3_episodes($id_podcast, $user_id){
 
@@ -839,7 +1061,7 @@ if(isset($_POST['func'])){
         }
         //print_r($dateeps).'<br>';
 
-        $xml = simplexml_load_file("https://www.spreaker.com/show/3221921/episodes/feed");
+        $xml = simplexml_load_file("$url");
         foreach($xml->channel->item as $title) {
           $audiourls_get = $title->enclosure->attributes();
           $audiourls[] = strval($audiourls_get);
@@ -866,8 +1088,6 @@ if(isset($_POST['func'])){
       }
 
     } else if($id_publisher == '6'){
-
-      include('vendor/simplehtmldom/simple_html_dom.php');
 
       function add_wnyc_episodes($id_podcast, $user_id){
 
@@ -945,11 +1165,7 @@ if(isset($_POST['func'])){
       add_wnyc_episodes($id_podcast, $user_id);
     }
 
-
-
-
     header("Location:http://localhost:8888/appod/");
-
 
     // USER MANAGEMENT ------------------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------------------------------
@@ -959,7 +1175,6 @@ if(isset($_POST['func'])){
     $password = $_POST['password'];
     $action = $_POST['action_send'];
     $conn	= db();
-
 
     $key_sk = random_bytes(32);
     $key_siv = random_bytes(32);
@@ -1075,8 +1290,6 @@ if(isset($_POST['func'])){
       header("Location:http://localhost:8888/appod/");
 
     }
-
-
      else {
         //no button pressed
     }
@@ -1095,7 +1308,6 @@ if(isset($_POST['func'])){
         echo $row['id'].',';
       }
     }
-
     markall($id_podcast_post, $id_user);
 
   } else if($func == 'remove'){
@@ -1105,7 +1317,6 @@ if(isset($_POST['func'])){
 
     function remove($id_podcast_post, $id_user){
       $conn	= db();
-
 
       foreach($conn->query("DELETE FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
       }
@@ -1119,8 +1330,6 @@ if(isset($_POST['func'])){
   }
 
 
-
 }
-
 
  ?>

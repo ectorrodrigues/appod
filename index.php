@@ -43,13 +43,57 @@
 
   ?>
 
+  <div class="loading">
+    <i class="fa fa-spinner red-text" aria-hidden="true" style="position:absolute; font-size:40px; margin-top: 200px; margin-left:48%; z-index:900;"></i>
+  </div>
 
+  <div class="fullscreen">
+    <div class="row justify-content-center">
+      <div class="col-12 text-left">
+        <div class="row justify-content-end">
+          <i class="fa fa-times-circle-o red-text text-right cursor-pointer transition" aria-hidden="true" onclick="closelist()"></i>
+        </div>
+        <div class="row justify-content-center">
+          <?php
+            $conn	= db();
 
+            foreach($conn->query("SELECT * FROM publisher ORDER BY title ASC") as $row) {
+              $id_publisher = $row['id'];
+              $title_publisher = $row['title'];
+
+              echo '<div class="col-4 p-5">
+                      <div class="publisher_title">'.$title_publisher.'</div>';
+
+              foreach($conn->query("SELECT * FROM podcast WHERE id_publisher = '$id_publisher' AND id_user = '0' ") as $row) {
+                $id_podcast = $row['id'];
+                $title_podcast = $row['title'];
+                echo '
+                <form action="model.php" method="post" enctype="multipart/form-data" class="podcasts-list">
+                  <select class="podcasts_select col-6" name="podcasts_select">
+                    <option value="'.$id_podcast.'-'.$id_publisher.'-1">'.$title_podcast.'</option>
+                  </select>
+                  <input type="hidden" name="func" value="add_podcast">
+                  <input type="hidden" name="user_id" value="'.$user_id.'">
+                  <input type="submit" class="button transition" name="submit" value="+">
+                </form>
+                ';
+              }
+
+              echo '</div>';
+            }
+            $conn	= NULL;
+          ?>
+        </div>
+      </div>
+
+    </div>
+  </div>
 
   <div class="container-fluid">
+
     <div class="row p-3 bottom-line">
       <div class="col-4">
-        <form action="model.php" method="post" enctype="multipart/form-data" class="login-form">
+        <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline">
           <?php
             $conn	= db();
 
@@ -69,14 +113,19 @@
           <input type="hidden" name="user_id" value="<?= $user_id ?>">
           <input type="submit" class="button transition" name="submit" value="+ add">
         </form>
+
+        <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="openlist()"><i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All</div>
+
       </div>
       <div class="col-8 text-right">
+        <span class="login-form">
           <span class="message red-text mr-2"></span>
           <input type="text" name="user" class="mr-2 d-inline-block" placeholder="user" id="user" value="">
           <input type="password" name="password" class="mr-2 d-inline-block" placeholder="password" id="password" value="">
-          <input type="submit" class="button transition d-inline-block mr-2" name="login" value="login" onClick="login('login')"> or &nbsp;
+          <input type="submit" class="button transition d-inline-block mr-2 btnlogin" name="login" value="login" onClick="login('login')"> or &nbsp;
           <input type="submit" class="button transition d-inline-block red" name="newuser"  value="newuser" onClick="login('newuser')">
-          <span class="ml-2 logout" onClick="login('logout')">logout</span>
+        </span>
+        <span class="ml-2 logout" onClick="login('logout')">logout</span>
       </div>
     </div>
 
@@ -92,6 +141,51 @@
   </div>
 
 <script type="text/javascript">
+
+    $( document ).ready(function() {
+        $('.fullscreen').hide();
+        $('#episodes_container').hide();
+        $('.loading').hide();
+
+        $( ".btnlogin" ).click(function() {
+          $('.loading').show();
+        });
+
+        function getCookie(name) {
+            var dc = document.cookie;
+            var prefix = name + "=";
+            var begin = dc.indexOf("; " + prefix);
+            if (begin == -1) {
+                begin = dc.indexOf(prefix);
+                if (begin != 0) return null;
+            }
+            else
+            {
+                begin += 2;
+                var end = document.cookie.indexOf(";", begin);
+                if (end == -1) {
+                end = dc.length;
+                }
+            }
+            // because unescape has been deprecated, replaced with decodeURI
+            //return unescape(dc.substring(begin + prefix.length, end));
+            return decodeURI(dc.substring(begin + prefix.length, end));
+        }
+
+        function cookieaction() {
+            var myCookie = getCookie("login");
+
+            if (myCookie == null) {
+            }
+            else {
+                  $('#episodes_container').show();
+                $('.login-form').hide();
+            }
+        }
+
+        cookieaction();
+
+    });
 
     function status_switch(status_id, id_podcast){
 
@@ -157,11 +251,6 @@
       });
 
     }
-
-
-    $( document ).ready(function() {
-        console.log( "ready!" );
-    });
 
     function login(action){
 
@@ -238,6 +327,14 @@
         alert( "Request failed: " + textStatus );
       });
 
+    }
+
+    function closelist(){
+      $('.fullscreen').hide();
+    }
+
+    function openlist(){
+      $('.fullscreen').show();
     }
 
 </script>
