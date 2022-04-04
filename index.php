@@ -25,13 +25,19 @@
       $query->execute();
       $rowcount = $query->rowCount();
 
+      if($rowcount == 0){
+        $bg_flag = '#111114';
+      } else {
+        $bg_flag = '#ED0851';
+      }
+
       echo '
       <div class="podcasts_menu_items row" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\', \'15\')">
         <div class="col-10">
           '.$title.'
         </div>
         <div class="col-2">
-          <div class="flag-to-listen podcast_flag_'.$id.'">
+          <div class="flag-to-listen podcast_flag_'.$id.'" style="background-color:'.$bg_flag.';">
             '.$rowcount.'
           </div>
         </div>
@@ -95,7 +101,7 @@
                 echo '
                 <form action="model.php" method="post" enctype="multipart/form-data" class="podcasts-list">
                   <select class="podcasts_select col-10" name="podcasts_select">
-                    <option value="'.$id_podcast.'-'.$id_publisher.'-1">'.$title_podcast.'</option>
+                    <option value="'.$id_podcast.'-'.$id_publisher.'-'.$user_id.'">'.$title_podcast.'</option>
                   </select>
                   <input type="hidden" name="func" value="add_podcast">
                   <input type="hidden" name="user_id" value="'.$user_id.'">
