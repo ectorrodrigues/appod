@@ -33,10 +33,10 @@
 
       echo '
       <div class="podcasts_menu_items row" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\', \'15\')">
-        <div class="col-10">
+        <div class="col-lg-10 col-9">
           '.$title.'
         </div>
-        <div class="col-2">
+        <div class="col-lg-2 col-3">
           <div class="flag-to-listen podcast_flag_'.$id.'" style="background-color:'.$bg_flag.';">
             '.$rowcount.'
           </div>
@@ -124,8 +124,12 @@
 
     <div class="row p-3 bottom-line flex">
 
-      <div class="col-lg-4 col-12 text-lg-left text-center order-1 mt-lg-0 mt-3">
-        <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline">
+      <div class="col-lg-4 col-12 text-lg-left text-center order-1 my-lg-auto my-5 logo">
+        <img src="inc/logo.svg" alt="logo" class="col-3 text-start">
+      </div>
+
+      <div class="col-lg-4 col-12 text-lg-left text-center order-2 mt-lg-0 mt-3 podcasts_select_form">
+        <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline podcasts_select_form">
           <?php
             $conn	= db();
 
@@ -150,25 +154,52 @@
 
       </div>
 
-      <div class="col-lg-8 col-12 text-lg-right text-center mt-lg-0 mt-2 order-2">
+      <div class="col-lg-8 col-12 text-lg-right text-center mt-lg-0 mt-2 order-3">
         <span class="login-form">
           <span class="col-lg-3 col-12 message red-text mr-lg-2 mr-12"></span>
           <input type="text" name="user" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12" placeholder="user" id="user" value="">
           <input type="password" name="password" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12 mb-lg-0 mb-4 mt-lg-0 mt-3 " placeholder="password" id="password" value="">
           <input type="submit" class="button transition d-inline-block mr-2 btnlogin mb-lg-0 mb-4" name="login" value="login" onClick="login('login')"> or &nbsp;
-          <input type="submit" class="button transition d-inline-block red mb-lg-0 mb-4" name="newuser"  value="newuser" onClick="login('newuser')">
+          <input type="submit" class="button transition d-inline-block red mb-lg-0 mb-4" name="newuser"  value="create user" onClick="login('newuser')">
         </span>
         <span class="ml-2 logout" onClick="login('logout')">logout</span>
       </div>
 
     </div>
 
+    <div class="row justify-content-center welcome mt-lg-0 mt-5 px-lg-0 px-5">
+      <div class="mt-lg-5 pt-lg-5 mx-auto">
+        <h1 class="mt-lg-5 pt-lg-5">
+          shout out to
+        </h1>
+        <h2>
+          <?php
+
+            $conn	= db();
+            $query	= $conn->prepare("SELECT title FROM shout ORDER BY rand() LIMIT 1");
+            $query->execute();
+            $fetch = $query->fetchColumn();
+
+            echo $fetch;
+
+           ?>
+        </h2>
+      </div>
+    </div>
+
     <div class="row">
-      <div class="col-3 aside">
+      <div class="col-lg-3 col-4 aside">
         <?php podcasts_menu(); ?>
       </div>
-      <div class="col-9 px-5 py-3" id="episodes_container">
 
+      <div class="col-lg-9 col-8 px-5 py-3" id="episodes_container">
+
+      </div>
+    </div>
+
+    <div class="row justify-content-start">
+      <div class="col-12 text-left signature">
+        in sarah koenig we trust.
       </div>
     </div>
 
@@ -181,46 +212,44 @@
         $('#episodes_container').hide();
         $('.loading').hide();
         $('.logout').hide();
+        $( ".podcasts_select_form" ).addClass( "d-none" );
+        $( ".flex" ).addClass( "justify-content-end" );
 
         $( ".btnlogin" ).click(function() {
           $('.loading').show();
         });
 
         function getCookie(name) {
-            var dc = document.cookie;
-            var prefix = name + "=";
-            var begin = dc.indexOf("; " + prefix);
-            if (begin == -1) {
-                begin = dc.indexOf(prefix);
-                if (begin != 0) return null;
+          var dc = document.cookie;
+          var prefix = name + "=";
+          var begin = dc.indexOf("; " + prefix);
+          if (begin == -1) {
+            begin = dc.indexOf(prefix);
+            if (begin != 0) return null;
+          } else {
+            begin += 2;
+            var end = document.cookie.indexOf(";", begin);
+            if (end == -1) {
+              end = dc.length;
             }
-            else
-            {
-                begin += 2;
-                var end = document.cookie.indexOf(";", begin);
-                if (end == -1) {
-                end = dc.length;
-                }
-            }
-            // because unescape has been deprecated, replaced with decodeURI
-            //return unescape(dc.substring(begin + prefix.length, end));
-            return decodeURI(dc.substring(begin + prefix.length, end));
+          }
+          return decodeURI(dc.substring(begin + prefix.length, end));
         }
 
         function cookieaction() {
             var myCookie = getCookie("login");
-
             if (myCookie == null) {
-            }
-            else {
-                  $('#episodes_container').show();
-                  $('.login-form').hide();
-                  $('.logout').show();
+            } else {
+              $('#episodes_container').show();
+              $('.login-form').hide();
+              $('.logout').show();
+              $('.logo').hide();
+              $('.welcome').hide();
+              $( ".podcasts_select_form" ).removeClass( "d-none" );
+              $( ".flex" ).removeClass( "justify-content-end" );
             }
         }
-
         cookieaction();
-
     });
 
     function status_switch(status_id, id_podcast){

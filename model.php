@@ -1696,16 +1696,37 @@ if(isset($_POST['func'])){
       add_globoplay_episodes($id_podcast, $user_id);
     }
 
-    header("Location:http://localhost:8888/appod/");
+    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+    $sitename = explode('/', $_SERVER['PHP_SELF']);
+    array_shift($sitename);
+    array_pop($sitename);
+    $sitename = implode('/', $sitename);
+    $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+    header("Location:$header_url");
 
     // USER MANAGEMENT ------------------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------------------------------
   } else if($func == 'user'){
 
-    $user = $_POST['user'];
-    $password = $_POST['password'];
+
+    if(isset($_POST['user'])){
+      $user = $_POST['user'];
+    } else {
+      echo 'user is empty. ';
+      die();
+    }
+
+    if(isset($_POST['password'])){
+      $password = $_POST['password'];
+    } else {
+      echo 'password is empty. ';
+      die();
+    }
+
     $action = $_POST['action_send'];
     $conn	= db();
+
+
 
     $key_sk = random_bytes(32);
     $key_siv = random_bytes(32);
@@ -1778,19 +1799,29 @@ if(isset($_POST['func'])){
           //UPDATE PODCASTS
           update_podcasts($user_id);
 
-          echo "you're in.";
+          echo "<span style=\"color:#43F90C;\">you're in. </span>";
 
         } else {
-          echo "wrong, try again.";
+          echo "wrong, try again. ";
         }
 
     } else if ($action == 'newuser') {
+
+      if($_POST['user'] == ''){
+        echo 'user is empty. ';
+        die();
+      }
+
+      if($_POST['password'] == ''){
+        echo 'password is empty. ';
+        die();
+      }
 
       $query	= $conn->prepare("SELECT id FROM user WHERE title = '$user'");
       $query->execute();
       //$id_podcast_fetch = $query->fetchColumn();
       if($query->rowCount() > 0){
-        echo 'user already exists, try again.';
+        echo 'user already exists, try again. ';
       } else {
 
         $crypted_password = encrypting("encrypt", $password, $key_sk, $key_siv);
@@ -1807,7 +1838,7 @@ if(isset($_POST['func'])){
         $cookie_value = $id_user_fetch;
         setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
 
-        echo "you're in.";
+        echo "you're in. ";
 
       }
 
@@ -1818,7 +1849,13 @@ if(isset($_POST['func'])){
       setcookie("login", "", time() - 3600);
       unset($_COOKIE['login']);
       setcookie('login', null, -1, '/');
-      header("Location:http://localhost:8888/appod/");
+      $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+      $sitename = explode('/', $_SERVER['PHP_SELF']);
+      array_shift($sitename);
+      array_pop($sitename);
+      $sitename = implode('/', $sitename);
+      $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+      header("Location:$header_url");
 
     }
      else {

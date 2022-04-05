@@ -14,7 +14,6 @@
     <meta name="rating" content="general" />
     <meta name="DC.title" content="Appod" />
     <meta name="theme-color" content="#000000"/>
-    <meta name="viewport" content="width=640, initial-scale=1.0, maximum-scale=5" />
 
     <!-- Jquery and Ajax Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -31,8 +30,15 @@
     <script src="https://kit.fontawesome.com/4b4ca867c1.js" crossorigin="anonymous"></script>
     <!--<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">-->
 
-
-    <link rel="canonical" href="http://localhost:8888/apod"/>
+    <?php
+    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+    $sitename = explode('/', $_SERVER['PHP_SELF']);
+    array_shift($sitename);
+    array_pop($sitename);
+    $sitename = implode('/', $sitename);
+    $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+    ?>
+    <link rel="canonical" href="<?=$header_url?>"/>
 
     <link rel="apple-touch-icon" sizes="16x16" href="inc/favicon.ico">
     <link rel="icon" type="image/png" sizes="96x96" href="inc/favicon-96x96.png">

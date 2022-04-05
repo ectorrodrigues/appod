@@ -74,7 +74,7 @@ for($i = 0; $i < $count_arr; $i++){
     add_wnyc_episodes($id_podcast, $user_id);
   }
 }
-*/
+
 
 
 $podcast_arr = array();
@@ -119,6 +119,15 @@ for($i = 0; $i < $count_arr; $i++){
   }
 
 }
+
+*/
+
+$protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+$sitename = explode('/', $_SERVER['PHP_SELF']);
+array_shift($sitename);
+array_pop($sitename);
+$sitename = implode('/', $sitename);
+$header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
 
 
  ?>
