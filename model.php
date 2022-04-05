@@ -1794,7 +1794,7 @@ if(isset($_POST['func'])){
 
           $cookie_name = "login";
           $cookie_value = $user_id;
-          setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+          setcookie($cookie_name, $cookie_value, time() + (36000 * 30), "/"); // 10 HOURS - 86400 = 1 day
 
           //UPDATE PODCASTS
           update_podcasts($user_id);
@@ -1836,7 +1836,7 @@ if(isset($_POST['func'])){
 
         $cookie_name = "login";
         $cookie_value = $id_user_fetch;
-        setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+        setcookie($cookie_name, $cookie_value, time() + (36000 * 30), "/"); // 10 HOURS - 86400 = 1 day
 
         echo "you're in. ";
 
