@@ -1,0 +1,291 @@
+body{
+  background-color: #111114;
+  color:#eee;
+  font-family: 'Titillium Web', sans-serif;
+  font-size: 15px;
+}
+
+.status-circle{
+  width: 40px;
+  height: 40px;
+  border:solid 1px #555;
+  border-radius: 20px;
+  color:#333;
+  font-size: 1.2em;
+  text-align: center;
+  padding-top:5px;
+  cursor: pointer;
+}
+
+.aside{
+  border-right:solid 1px #555;
+}
+
+.podcasts_menu_items{
+  border-bottom:solid 1px #555;
+  padding: 15px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.flag-to-listen{
+  background-color: #ED0851;
+  min-width: 27px;
+  height: 27px;
+  padding: 2px 3px 6px 3px;
+  border-radius:13px;
+  text-align: center;
+  display: inline-block;
+  color:#111114;
+  font-weight: 700;
+}
+
+select, input[type='text'], input[type='password']{
+  appearance:none;
+  -webkit-appearance:none;
+  background-color: #111114 !important;
+  color:#eee;
+  padding: 8px 15px;
+  border-radius: 20px;
+}
+
+input{
+  background-color: #111114 !important;
+  color:#eee !important;
+  border:solid 1px #555;
+}
+
+.button{
+  width: auto;
+  text-align: center;
+  font-size:1em;
+  border-radius: 12px;
+  background-color: #888;
+  color: #fff;
+  border:none;
+  margin: auto;
+  padding: 7px 10px;
+
+  background: rgb(150,0,206);
+  background: linear-gradient(220deg, rgba(150,0,206,1) 0%, rgba(0,212,255,1) 100%);
+}
+
+.button:hover{
+  text-decoration: none;
+  font-weight: 700;
+  background: rgb(150,0,206);
+  background: linear-gradient(51deg, rgba(150,0,206,1) 0%, rgba(0,212,255,1) 100%);
+  color:#000;
+}
+
+.bottom-line{
+  border-bottom:solid 1px #555;
+}
+
+.transition{
+	-webkit-transition: all 0.5s;
+	-moz-transition: all 0.5s;
+	-ms-transition: all 0.5s;
+	-o-transition: all 0.5s;
+	transition: all 0.5s;
+}
+
+.red{
+  background-color: #ED0851;
+  background: #ED0851 !important;
+}
+
+.red-text{
+  color: #ED0851;
+}
+
+.logout{
+  cursor:pointer;
+  font-size: 0.8em;
+}
+
+.logout:hover{
+  color:#0dd;
+  text-decoration: none;
+}
+
+.cursor-pointer{
+  cursor: pointer;
+}
+
+.modalscreen{
+  position: absolute;
+  z-index: 1000;
+  margin-left: 33.3%;
+  margin-top:10%;
+  padding: 80px 100px;
+  border-radius: 12px;
+  text-align: center;
+  background-color: #222;
+  border:solid 1px #999;
+}
+
+.remove-yes:hover{
+  color: #ED0851;
+}
+
+.remove-no:hover{
+  color:#0dd;
+}
+
+.fullscreen{
+  position: absolute;
+  background-color: #111114;
+  width: 100%;
+  height: 800%;
+  z-index: 1000;
+  margin: 0;
+  padding: 50px;
+
+}
+
+.podcasts-list select{
+  border:none !important;
+  background-color: #111114; !important;
+}
+
+.podcasts-list .button{
+  padding: 2px 10px !important;
+  margin: 7px 0;
+}
+
+.publisher_title{
+  font-size: 1.2em;
+  margin-bottom:-4px;
+  color:#0dd;
+  margin-top:0px;
+  border-top:solid 1px #444;
+  padding-top:15px;
+  padding-left: 15px;
+}
+
+.fa-times-circle-o{
+  font-size: 1.3em;
+}
+
+.fa-times-circle-o:hover{
+  color:#fff;
+  transform: rotate(90deg);
+}
+
+.openlist:hover{
+  color:#0dd;
+}
+
+.hover-blue:hover{
+  color:#0dd;
+}
+
+.fa-spinner{
+  position:absolute;
+  font-size:40px;
+  margin-top: 200px;
+  margin-left:48%;
+  z-index:900;
+
+  animation-name: rotatespinner;
+  animation-duration: 3s;
+  animation-iteration-count:infinite;
+
+  -webkit-animation-name: rotatespinner;
+  -webkit-animation-duration: 3s;
+  -webkit-animation-iteration-count:infinite;
+}
+
+@keyframes rotatespinner {
+	0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+@-webkit-keyframes rotatespinner {
+  0% { transform: rotate(0deg);}
+  100% { transform: rotate(360deg);}
+}
+
+.flex{
+}
+
+h1{
+  font-weight: 300;
+  color:#444;
+  font-size:2.5em;
+}
+
+h2{
+  font-weight: 300;
+  font-size:5.5em;
+}
+
+.signature{
+  position: relative;
+  margin-top: 530px;
+  font-size: 0.75em;
+  font-weight: 400;
+  font-style: italic;
+}
+
+
+
+/* -------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------
+**********************************************************************************************************
+                                         MOBILE STYLING
+**********************************************************************************************************
+----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------*/
+
+
+@media only screen and (min-device-width: 10px) and (max-device-width: 575px) {
+  body{
+    font-size:24px;
+  }
+
+  .message{
+    display: block !important;
+  }
+
+  .fullscreen{
+    height: 800%;
+  }
+
+  .order-1{
+    order: 2;
+  }
+
+  .order-2{
+    order: 3;
+  }
+
+  .order-3{
+    order: 2;
+  }
+
+  .logout{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .fa-spinner{
+    margin-top: 500px;
+  }
+
+  .flag-to-listen{
+      padding:5px 10px 40px 10px;
+      border-radius:20px;
+  }
+
+  .status-circle{
+    height: auto;
+    padding-top:0;
+  }
+
+  .signature{
+    position: fixed;
+  }
+}

@@ -215,7 +215,6 @@
         $( ".podcasts_select_form" ).addClass( "d-none" );
         $( ".flex" ).addClass( "justify-content-end" );
 
-
         $( ".btnlogin" ).click(function() {
           $('.loading').show();
         });
@@ -402,28 +401,6 @@
     function openlist(){
       $('.fullscreen').show();
     }
-
-    function getcurrenttime(id_episode) {
-      var x = document.getElementById(id_episode);
-      var currenttime = x.currentTime;
-
-      var request = $.ajax({
-        url: "model.php",
-        type: "POST",
-        data: {id : id_episode, currenttime_post : currenttime, func : 'currenttime'},
-        dataType: "html"
-      });
-
-      request.done(function(msg) {
-      });
-
-      request.fail(function(jqXHR, textStatus) {
-        alert( "Request failed: " + textStatus );
-      });
-
-    }
-
-
 
 </script>
 

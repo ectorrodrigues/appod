@@ -60,7 +60,7 @@ function update_gimlet_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -126,7 +126,7 @@ function update_b9_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -191,7 +191,7 @@ function update_jovemnerd_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -256,7 +256,7 @@ function update_central3_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -323,7 +323,7 @@ function update_halfdeaf_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -388,7 +388,7 @@ function update_wnyc_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -453,7 +453,7 @@ function update_various_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -518,7 +518,7 @@ function update_npr_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -583,7 +583,7 @@ function update_globoplay_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
+      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0')";
       $query	= $conn->prepare($sql);
       $query->execute();
     }
@@ -677,10 +677,6 @@ if(isset($_POST['func'])){
           $url = $row['url'];
           $status = $row['status'];
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -723,10 +719,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -740,7 +732,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -773,10 +765,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -790,7 +778,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -823,10 +811,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -840,7 +824,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -875,10 +859,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -892,7 +872,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -925,10 +905,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -942,7 +918,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -975,10 +951,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -992,7 +964,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -1025,10 +997,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -1042,7 +1010,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -1075,10 +1043,6 @@ if(isset($_POST['func'])){
           $date_publish = strtotime($date_publish);
           $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
-          $currenttime = $row['currenttime'];
-          if($currenttime != '0'){
-            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
-          }
 
           if($status == '1'){
             $bg_color = "#1BCD48";
@@ -1092,7 +1056,7 @@ if(isset($_POST['func'])){
           <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
               <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+              <audio controls id='.$id.' class="col-12">
                 <source src="'.$url.'" type="audio/mpeg">
               </audio>
             </div>
@@ -1207,7 +1171,7 @@ if(isset($_POST['func'])){
           $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
           $query->execute();
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1269,7 +1233,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1331,7 +1295,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1393,7 +1357,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1453,7 +1417,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1515,7 +1479,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1577,7 +1541,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1639,7 +1603,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1701,7 +1665,7 @@ if(isset($_POST['func'])){
           $query->execute();
 
           if($query->rowCount() == 0){
-            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0')");
             $addurl->execute();
           }
         }
@@ -1932,16 +1896,6 @@ if(isset($_POST['func'])){
     }
 
     remove($id_podcast_post, $id_user);
-
-  } else if($func == 'currenttime'){
-
-    $id_episode = $_POST['id'];
-    $currenttime = $_POST['currenttime_post'];
-
-    $conn	= db();
-    $query = $conn->prepare("UPDATE episode SET currenttime = '$currenttime' WHERE id = '$id_episode'");
-    $query->execute();
-
 
   }
 
