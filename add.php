@@ -34,13 +34,11 @@
 <div class="container-fluid">
   <div class="row justify-content-center">
     <?php
+      include 'inc/database.php';
+      $conn	= db();
 
       if (isset($_GET['action'])) {
         if ($_GET['action'] == 'add') {
-
-          include 'inc/database.php';
-
-          $conn	= db();
           $title = $_POST['title'];
           $publisher = $_POST['publisher'];
           $link = $_POST['link'];
@@ -48,8 +46,7 @@
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$publisher', '$link', '$id_user') ");
           $query->execute();
 
-          echo 'Done!';
-
+          echo '<h1 class="text-center my-3">Done!</h1>';
         }
       }
 
@@ -59,7 +56,17 @@
         <label>Name:</label><br>
         <input type="text" name="title" class="col-12" value=""><br>
         <label>Publisher:</label><br>
-        <input type="text" name="publisher" class="col-12" value="7"><br>
+        <select class="col-12" name="publisher">
+            <?php
+
+            foreach($conn->query(" SELECT * FROM publisher") as $row) {
+              $title_pod = $row['title'];
+              $id_publisher_pod = $row['id'];
+              echo '<option value="'.$id_publisher_pod.'">'.$title_pod.'</option>';
+            }
+
+            ?>
+        </select><br>
         <label>Link:</label><br>
         <input type="text" name="link" class="col-12" value=""><br>
         <input type="hidden" name="id_user" class="col-12" value="0"><br>
@@ -68,6 +75,7 @@
     </div>
   </div>
 </div>
+<?php $conn	= NULL; ?>
 
 
 </body>
