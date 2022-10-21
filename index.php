@@ -150,7 +150,12 @@
           <input type="submit" class="button transition" name="submit" value="+ add">
         </form>
 
-        <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="openlist()"><i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All</div>
+        <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="openlist()">
+          <i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All
+        </div>
+        <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="update_episodes(<?= $user_id ?>)">
+          <i class="fa fa-refresh" aria-hidden="true"></i> Update
+        </div>
 
       </div>
 
@@ -421,6 +426,11 @@
         alert( "Request failed: " + textStatus );
       });
 
+    }
+
+
+    function update_episodes(id_user){
+      window.location.href = "model.php?id_user_update="+id_user;
     }
 
 

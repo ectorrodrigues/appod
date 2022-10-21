@@ -2,6 +2,14 @@
 include('inc/database.php');
 include('vendor/simplehtmldom/simple_html_dom.php');
 
+if(isset($_GET['id_user_update'])){
+  $id_user_update = $_GET['id_user_update'];
+
+  //echo $id_user_update; die();
+  update_podcasts($id_user_update);
+  header("Location:/appod");
+}
+
 function update_gimlet_episodes($id_podcast, $user_id){
   $conn	= db();
   foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
