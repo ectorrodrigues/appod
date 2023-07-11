@@ -128,7 +128,7 @@
         <img src="inc/logo.svg" alt="logo" class="col-3 text-start">
       </div>
 
-      <div class="col-lg-4 col-12 text-lg-left text-center order-2 mt-lg-0 mt-3 podcasts_select_form">
+      <div class="col-lg-6 col-12 text-lg-left text-center order-2 mt-lg-0 mt-3 podcasts_select_form">
         <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline podcasts_select_form">
           <?php
             $conn	= db();
@@ -159,7 +159,7 @@
 
       </div>
 
-      <div class="col-lg-8 col-12 text-lg-right text-center mt-lg-0 mt-2 order-3">
+      <div class="col-lg-6 col-12 text-lg-right text-center mt-lg-0 mt-2 order-3">
         <span class="login-form">
           <span class="col-lg-3 col-12 message red-text mr-lg-2 mr-12"></span>
           <input type="text" name="user" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12" placeholder="user" id="user" value="">
