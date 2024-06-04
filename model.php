@@ -1242,11 +1242,14 @@ if(isset($_POST['func'])){
         $id_podcast_fetch = $query->fetchColumn();
         $html = file_get_html($url);
 
-        foreach($html->find('.LTUrYb') as $title) {
-          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
-          $titles[] = $item_title;
+        foreach($html->find('.c-podcast-content-card') as $title) {
+          $item_title = $title->find('.btn-play-card ', 0)->plaintext;
+          print_r($item_title);
+
         }
         //print_r($titles);
+
+        die();
 
         $i = 0;
         $dateepsarr = array();
