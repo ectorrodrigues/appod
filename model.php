@@ -1244,6 +1244,7 @@ if(isset($_POST['func'])){
         $id_podcast_fetch = $query->fetchColumn();
         */
 
+        /*
         $html = file_get_html($url);
 
         $arrr = array();
@@ -1256,11 +1257,9 @@ if(isset($_POST['func'])){
               $dom->saveHtml($node);
               $arrr[] = $node->getAttribute( 'href' );
           }
-
-
-
         }
         echo $arrr[0];
+        */
 
         /*
         $arrr = array();
@@ -1276,26 +1275,25 @@ if(isset($_POST['func'])){
         //print_r($titles);
         */
 
-        die();
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("https://www.omnycontent.com/d/playlist/651a251e-06e1-47e0-9336-ac5a00f41628/fc243b66-f34c-4656-9042-acd400edcca5/d4c8e398-446c-447a-ad41-acd400edccc1/podcast.rss");
 
-        $i = 0;
-        $dateepsarr = array();
-        foreach($html->find('.oD3fme') as $dateep) {
-          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
-          $finaldate = strtotime($item_dateep);
-          $finaldate = date('Y-m-d',$finaldate);
-          $dateeps[] = $finaldate;
-          $i++;
-        }
-        //print_r($dateeps);
+        foreach($rss->channel->item as $item){ //Cria um laço para cada  dentro do , que representa cada registro
+            /*
+            echo "{$item->title}"."<br>";
+            echo "{$item->enclosure['url']}"."<br><br><br>";
+            */
 
-        $i = 0;
-        foreach($html->find('div[jsdata]') as $title) {
-          $title_get =  $title->jsdata;
-          $title_get = explode(";",$title_get);
-          $audiourls[] = $title_get[1];
+            $titles[] = "{$item->title}";
+
+            $audiourls[] = "{$item->enclosure['url']}";
+
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
+            $dateeps[] = $finaldate;
+
         }
-        //print_r($audiourls);
 
         $arrlenght = count($titles);
         $today = date("Y-m-d");
