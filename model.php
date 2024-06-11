@@ -1233,21 +1233,48 @@ if(isset($_POST['func'])){
           $title = $row['title'];
           $id_publisher = $row['id_publisher'];
           $url = $row['url'];
+          /*
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
           $query->execute();
+          */
         }
-
+        /*
         $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
         $query->execute();
         $id_podcast_fetch = $query->fetchColumn();
+        */
+
         $html = file_get_html($url);
 
-        foreach($html->find('.c-podcast-content-card') as $title) {
-          $item_title = $title->find('.btn-play-card ', 0)->plaintext;
-          print_r($item_title);
+        $arrr = array();
+        foreach($html->find('.content-desc-ep') as $title) {
+
+          $dom = new DOMDocument();
+          $dom->loadHTML($title);
+          //$dom->saveHTML();
+          foreach ($dom->getElementsByTagName('a') as $node) {
+              $dom->saveHtml($node);
+              $arrr[] = $node->getAttribute( 'href' );
+          }
+
+
 
         }
+        echo $arrr[0];
+
+        /*
+        $arrr = array();
+        foreach($html->find('.content-desc-ep') as $title) {
+
+          $arrr[] = $item_dateep;
+
+          //$item_title = $title->find('a', 0)->plaintext;
+          //print_r($item_title);
+
+        }
+        print_r($arrr);
         //print_r($titles);
+        */
 
         die();
 

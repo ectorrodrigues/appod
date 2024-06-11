@@ -3,8 +3,11 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="author" content="Appod" />
-    <meta http-equiv="cache-control" content="Public, max-age=31536000">
-    <meta http-equiv="Pragma" content="Public">
+    <meta http-equiv="cache-control" content="max-age=0" />
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="expires" content="0" />
+<meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+<meta http-equiv="pragma" content="no-cache" />
     <meta http-equiv="content-language" content="en-us" />
     <meta name="description" content="Appod" />
     <meta name="DC.description" content="Appod Podcast Player." />
