@@ -1250,7 +1250,7 @@ if(isset($_POST['func'])){
         $rss = simplexml_load_file("$url");
 
         foreach($rss->channel->item as $item){
-            $titles[] = "{$item->title}";
+            $titles[] = str_replace("'","", "{$item->title}");
             $audiourls[] = "{$item->enclosure['url']}";
             $item_dateep = "{$item->pubDate}";
             $finaldate = strtotime($item_dateep);
@@ -1258,19 +1258,11 @@ if(isset($_POST['func'])){
             $dateeps[] = $finaldate;
         }
 
-
-
         $arrlenght = count($titles);
         $today = date("Y-m-d");
         $i = 0;
 
-        //print_r($titles);
-        //die();
-
-        $arrlenghtfim = ($arrlenght-10);
-
-
-        for($i = 0; $i < $arrlenght; $i++){
+        for($i = 1; $i < $arrlenght; $i++){
 
           $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
           $query->execute();
@@ -1279,23 +1271,8 @@ if(isset($_POST['func'])){
             $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
             $addurl->execute();
           }
-
-          echo $titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br>";
-
-          /*
-          if($i == 64){
-            echo $titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br>";
-            die();
-          }
-          */
-
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
         }
-
-        //echo $arrlenght;
-        die();
-
-        //echo "conn<br>";
-        //$conn	= NULL;
 
       }
     }
