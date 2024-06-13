@@ -1,4 +1,9 @@
 <?php
+
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
 include('inc/database.php');
 include('vendor/simplehtmldom/simple_html_dom.php');
 
@@ -659,7 +664,9 @@ if(isset($_POST['func'])){
 
     // LIST EPISODES ------------------------------------------------------------------------------------------
     // --------------------------------------------------------------------------------------------------------
-  } else if($func == 'list_episodes'){
+  }
+
+  else if($func == 'list_episodes'){
 
     // Check the publisher
     $id_publisher = $_POST['id_publisher'];
@@ -867,9 +874,7 @@ if(isset($_POST['func'])){
       }
       list_central3_episodes($id_podcast_post, $id_user, $limit);
 
-    }
-
-    else if ($id_publisher == '5'){
+    } else if ($id_publisher == '5'){
 
       function list_halfdeaf_episodes($id_podcast_post, $id_user, $limit){
 
@@ -1161,7 +1166,6 @@ if(isset($_POST['func'])){
 
     // IF GIMLET
     if($id_publisher == '1'){
-
       function add_gimlet_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1223,9 +1227,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '2'){
-
+    else if($id_publisher == '2'){
       function add_b9_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1233,71 +1237,38 @@ if(isset($_POST['func'])){
           $title = $row['title'];
           $id_publisher = $row['id_publisher'];
           $url = $row['url'];
-          /*
+
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
           $query->execute();
-          */
         }
-        /*
+
         $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
         $query->execute();
         $id_podcast_fetch = $query->fetchColumn();
-        */
-
-        /*
-        $html = file_get_html($url);
-
-        $arrr = array();
-        foreach($html->find('.content-desc-ep') as $title) {
-
-          $dom = new DOMDocument();
-          $dom->loadHTML($title);
-          //$dom->saveHTML();
-          foreach ($dom->getElementsByTagName('a') as $node) {
-              $dom->saveHtml($node);
-              $arrr[] = $node->getAttribute( 'href' );
-          }
-        }
-        echo $arrr[0];
-        */
-
-        /*
-        $arrr = array();
-        foreach($html->find('.content-desc-ep') as $title) {
-
-          $arrr[] = $item_dateep;
-
-          //$item_title = $title->find('a', 0)->plaintext;
-          //print_r($item_title);
-
-        }
-        print_r($arrr);
-        //print_r($titles);
-        */
 
         //Pegando os dados do Feed RSS
-        $rss = simplexml_load_file("https://www.omnycontent.com/d/playlist/651a251e-06e1-47e0-9336-ac5a00f41628/fc243b66-f34c-4656-9042-acd400edcca5/d4c8e398-446c-447a-ad41-acd400edccc1/podcast.rss");
+        $rss = simplexml_load_file("$url");
 
-        foreach($rss->channel->item as $item){ //Cria um laço para cada  dentro do , que representa cada registro
-            /*
-            echo "{$item->title}"."<br>";
-            echo "{$item->enclosure['url']}"."<br><br><br>";
-            */
-
+        foreach($rss->channel->item as $item){
             $titles[] = "{$item->title}";
-
             $audiourls[] = "{$item->enclosure['url']}";
-
             $item_dateep = "{$item->pubDate}";
             $finaldate = strtotime($item_dateep);
             $finaldate = date('Y-m-d',$finaldate);
             $dateeps[] = $finaldate;
-
         }
+
+
 
         $arrlenght = count($titles);
         $today = date("Y-m-d");
         $i = 0;
+
+        //print_r($titles);
+        //die();
+
+        $arrlenghtfim = ($arrlenght-10);
+
 
         for($i = 0; $i < $arrlenght; $i++){
 
@@ -1308,14 +1279,28 @@ if(isset($_POST['func'])){
             $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
             $addurl->execute();
           }
+
+          echo $titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br>";
+
+          /*
+          if($i == 64){
+            echo $titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br>";
+            die();
+          }
+          */
+
         }
 
-        $conn	= NULL;
+        //echo $arrlenght;
+        die();
+
+        //echo "conn<br>";
+        //$conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '3'){
-
+    else if($id_publisher == '3'){
       function add_jovemnerd_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1375,9 +1360,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '4'){
-
+    else if($id_publisher == '4'){
       function add_central3_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1437,9 +1422,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '5'){
-
+    else if($id_publisher == '5'){
       // XML PARSING
       function add_halfdeaf_episodes($id_podcast, $user_id){
 
@@ -1497,9 +1482,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '6'){
-
+    else if($id_publisher == '6'){
       function add_wnyc_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1559,9 +1544,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '7'){
-
+    else if($id_publisher == '7'){
       function add_various_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1621,9 +1606,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '8'){
-
+    else if($id_publisher == '8'){
       function add_npr_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1683,9 +1668,9 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
+    }
 
-    } else if($id_publisher == '9'){
-
+    else if($id_publisher == '9'){
       function add_globoplay_episodes($id_podcast, $user_id){
 
         $conn	= db();
@@ -1745,7 +1730,6 @@ if(isset($_POST['func'])){
         $conn	= NULL;
 
       }
-
     }
 
     if($id_publisher == '1'){
@@ -1768,12 +1752,17 @@ if(isset($_POST['func'])){
       add_globoplay_episodes($id_podcast, $user_id);
     }
 
+
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
     $sitename = explode('/', $_SERVER['PHP_SELF']);
     array_shift($sitename);
     array_pop($sitename);
     $sitename = implode('/', $sitename);
     $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+
+    //echo $header_url;
+    //die();
+
     header("Location:$header_url");
 
     // USER MANAGEMENT ------------------------------------------------------------------------------------------
@@ -1797,8 +1786,6 @@ if(isset($_POST['func'])){
 
     $action = $_POST['action_send'];
     $conn	= db();
-
-
 
     $key_sk = random_bytes(32);
     $key_siv = random_bytes(32);
@@ -1973,11 +1960,9 @@ if(isset($_POST['func'])){
 
     $id_episode = $_POST['id'];
     $currenttime = $_POST['currenttime_post'];
-
     $conn	= db();
     $query = $conn->prepare("UPDATE episode SET currenttime = '$currenttime' WHERE id = '$id_episode'");
     $query->execute();
-
 
   }
 
