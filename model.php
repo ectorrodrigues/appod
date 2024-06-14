@@ -17,66 +17,40 @@ if(isset($_GET['id_user_update'])){
 
 function update_gimlet_episodes($id_podcast, $user_id){
   $conn	= db();
-  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-    $title = $row['title'];
-    $id_publisher = $row['id_publisher'];
-    $url = $row['url'];
-  }
+
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
-  } else {
-    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-      $title = $row['title'];
-      $id_publisher = $row['id_publisher'];
-      $url = $row['url'];
-      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
-      $query->execute();
-    }
-    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
-    $query->execute();
-    $id_podcast_fetch = $query->fetchColumn();
   }
-  $html = file_get_html($url);
-  $i = 0;
-  foreach($html->find('.episode-card') as $title) {
-    $item_title = $title->find('.episode-title', 0)->plaintext;
-    if($i != 100){
-      $titles[] = $item_title;
-    }
-    $i++;
-  }
-  //print_r($titles);
-  $i = 0;
-  foreach($html->find('.episode-card') as $dateep) {
-    $item_dateep = $dateep->find('.episode-date', 0)->plaintext;
-    $finaldate = strtotime($item_dateep);
-    $finaldate = date('Y-m-d',$finaldate);
-    if($i != 100){
+
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
+
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
       $dateeps[] = $finaldate;
-    }
-    $i++;
   }
-  //print_r($dateeps);
-  $i = 0;
-  foreach($html->find('div[class=listen-now]') as $element){
-    $classurl = 'data-listen-now-player-url';
-    $audiourls[] = $element->$classurl;
-    $i++;
-  }
-  //print_r($audiourls);
+
   $arrlenght = count($titles);
   $today = date("Y-m-d");
+  $i = 0;
+
   for($i = 0; $i < $arrlenght; $i++){
+
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
+
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
-      $query	= $conn->prepare($sql);
-      $query->execute();
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
     }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
   }
   $conn	= NULL;
 
@@ -84,130 +58,80 @@ function update_gimlet_episodes($id_podcast, $user_id){
 
 function update_b9_episodes($id_podcast, $user_id){
   $conn	= db();
-  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-    $title = $row['title'];
-    $id_publisher = $row['id_publisher'];
-    $url = $row['url'];
-  }
+
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
-  } else {
-    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-      $title = $row['title'];
-      $id_publisher = $row['id_publisher'];
-      $url = $row['url'];
-      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
-      $query->execute();
-    }
-    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
-    $query->execute();
-    $id_podcast_fetch = $query->fetchColumn();
   }
-  $html = file_get_html($url);
-  foreach($html->find('.LTUrYb') as $title) {
-    $item_title = $title->find('.e3ZUqe', 0)->plaintext;
-    $titles[] = $item_title;
-  }
-  //print_r($titles); die();
 
-  $i = 0;
-  $dateepsarr = array();
-  foreach($html->find('.oD3fme') as $dateep) {
-    $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
-    $finaldate = strtotime($item_dateep);
-    $finaldate = date('Y-m-d',$finaldate);
-    $dateeps[] = $finaldate;
-    $i++;
-  }
-  //print_r($dateeps); die();
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
 
-  $i = 0;
-  foreach($html->find('div[jsdata]') as $title) {
-    $title_get =  $title->jsdata;
-    $title_get = explode(";",$title_get);
-    $audiourls[] = $title_get[1];
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
   }
-  //print_r($audiourls); die();
 
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
+
   for($i = 0; $i < $arrlenght; $i++){
+
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
+
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
-      $query	= $conn->prepare($sql);
-      $query->execute();
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
     }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
   }
   $conn	= NULL;
 }
 
 function update_jovemnerd_episodes($id_podcast, $user_id){
   $conn	= db();
-  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-    $title = $row['title'];
-    $id_publisher = $row['id_publisher'];
-    $url = $row['url'];
-  }
+
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
-  } else {
-    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-      $title = $row['title'];
-      $id_publisher = $row['id_publisher'];
-      $url = $row['url'];
-      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
-      $query->execute();
-    }
-    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
-    $query->execute();
-    $id_podcast_fetch = $query->fetchColumn();
   }
-  $html = file_get_html($url);
-  foreach($html->find('.LTUrYb') as $title) {
-    $item_title = $title->find('.e3ZUqe', 0)->plaintext;
-    $titles[] = $item_title;
-  }
-  //print_r($titles); die();
 
-  $i = 0;
-  $dateepsarr = array();
-  foreach($html->find('.oD3fme') as $dateep) {
-    $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
-    $finaldate = strtotime($item_dateep);
-    $finaldate = date('Y-m-d',$finaldate);
-    $dateeps[] = $finaldate;
-    $i++;
-  }
-  //print_r($dateeps); die();
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
 
-  $i = 0;
-  foreach($html->find('div[jsdata]') as $title) {
-    $title_get =  $title->jsdata;
-    $title_get = explode(";",$title_get);
-    $audiourls[] = $title_get[1];
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
   }
-  //print_r($audiourls); die();
 
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
+
   for($i = 0; $i < $arrlenght; $i++){
+
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
+
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
-      $query	= $conn->prepare($sql);
-      $query->execute();
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
     }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
   }
   $conn	= NULL;
 }
@@ -279,132 +203,80 @@ function update_central3_episodes($id_podcast, $user_id){
 
 function update_halfdeaf_episodes($id_podcast, $user_id){
   $conn	= db();
-  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-    $title = $row['title'];
-    $id_publisher = $row['id_publisher'];
-    $url = $row['url'];
-  }
+
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
-  } else {
-    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-      $title = $row['title'];
-      $id_publisher = $row['id_publisher'];
-      $url = $row['url'];
-      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
-      $query->execute();
-    }
-    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
-    $query->execute();
-    $id_podcast_fetch = $query->fetchColumn();
   }
 
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
 
-  $xml = simplexml_load_file("$url");
-
-
-  foreach($xml->channel->item as $title) {
-    $title_get = $title->title;
-    $titles[] = strval($title_get);
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
   }
-  //print_r($titles).'<br>';
-
-  foreach($xml->channel->item as $title) {
-    $dateep_get = $title->pubDate;
-    $finaldate = strtotime($dateep_get);
-    $finaldate = date('Y-m-d',$finaldate);
-    $dateeps[] = strval($finaldate);
-  }
-  //print_r($dateeps).'<br>';
-
-  $xml = simplexml_load_file("$url");
-  foreach($xml->channel->item as $title) {
-    $audiourls_get = $title->enclosure->attributes();
-    $audiourls[] = strval($audiourls_get);
-  }
-  //print_r($audiourls).'<br>';
 
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
 
-
   for($i = 0; $i < $arrlenght; $i++){
+
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
+
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
-      $query	= $conn->prepare($sql);
-      $query->execute();
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
     }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
   }
   $conn	= NULL;
 }
 
 function update_wnyc_episodes($id_podcast, $user_id){
   $conn	= db();
-  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-    $title = $row['title'];
-    $id_publisher = $row['id_publisher'];
-    $url = $row['url'];
-  }
+
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
     $url_podcast_fetch = $query->fetchColumn();
     $url = $url_podcast_fetch;
-  } else {
-    foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-      $title = $row['title'];
-      $id_publisher = $row['id_publisher'];
-      $url = $row['url'];
-      $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
-      $query->execute();
-    }
-    $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
-    $query->execute();
-    $id_podcast_fetch = $query->fetchColumn();
   }
-  $html = file_get_html($url);
-  foreach($html->find('.LTUrYb') as $title) {
-    $item_title = $title->find('.e3ZUqe', 0)->plaintext;
-    $titles[] = $item_title;
-  }
-  //print_r($titles); die();
 
-  $i = 0;
-  $dateepsarr = array();
-  foreach($html->find('.oD3fme') as $dateep) {
-    $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
-    $finaldate = strtotime($item_dateep);
-    $finaldate = date('Y-m-d',$finaldate);
-    $dateeps[] = $finaldate;
-    $i++;
-  }
-  //print_r($dateeps); die();
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
 
-  $i = 0;
-  foreach($html->find('div[jsdata]') as $title) {
-    $title_get =  $title->jsdata;
-    $title_get = explode(";",$title_get);
-    $audiourls[] = $title_get[1];
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
   }
-  //print_r($audiourls); die();
 
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
+
   for($i = 0; $i < $arrlenght; $i++){
+
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
+
     if($query->rowCount() == 0){
-      $sql = "INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')";
-      $query	= $conn->prepare($sql);
-      $query->execute();
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
     }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
   }
   $conn	= NULL;
 }
@@ -604,6 +476,89 @@ function update_globoplay_episodes($id_podcast, $user_id){
   $conn	= NULL;
 }
 
+function update_estherperel_episodes($id_podcast, $user_id){
+  $conn	= db();
+
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  }
+
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
+
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
+  }
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+
+  for($i = 0; $i < $arrlenght; $i++){
+
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+
+    if($query->rowCount() == 0){
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
+    }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
+  }
+  $conn	= NULL;
+}
+
+
+function update_thenewyorktimes_episodes($id_podcast, $user_id){
+  $conn	= db();
+
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  }
+
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
+
+  foreach($rss->channel->item as $item){
+      $titles[] = str_replace("'","", "{$item->title}");
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
+  }
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+
+  for($i = 0; $i < $arrlenght; $i++){
+
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+
+    if($query->rowCount() == 0){
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
+    }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
+  }
+  $conn	= NULL;
+}
+
+
+
 function update_podcasts($user_id){
 
   $podcast_arr = array();
@@ -649,7 +604,11 @@ function update_podcasts($user_id){
         update_npr_episodes($podcast_id_fetch, $user_id);
       } else if($id_publisher == '9'){
         update_globoplay_episodes($podcast_id_fetch, $user_id);
-      }
+      } else if($id_publisher == '10'){
+        update_estherperel_episodes($podcast_id_fetch, $user_id);
+      } else if($id_publisher == '11'){
+        update_thenewyorktimes_episodes($podcast_id_fetch, $user_id);
+     }
 
     }
 
@@ -691,6 +650,10 @@ if(isset($_POST['func'])){
           $id = $row['id'];
           $url = $row['url'];
           $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
           $id_podcast = $row['id_podcast'];
           $currenttime = $row['currenttime'];
           if($currenttime != '0'){
@@ -706,9 +669,12 @@ if(isset($_POST['func'])){
           }
 
           echo '
-          <div class="row justify-content-around">
+          <div class="row justify-content-around mb-3">
             <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
-              <iframe data-target="persistent-player.spotifyEmbed" src="'.$url.'" width="100%" height="152" frameborder="0" allowtransparency="true" allow="encrypted-media" style="height: 152px;" class="mt-2 test" id="'.$id.'"></iframe>
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
             </div>
             <div class="col-1 my-auto">
               <div class="row justify-content-center">
@@ -1124,6 +1090,106 @@ if(isset($_POST['func'])){
       }
       list_globoplay_episodes($id_podcast_post, $id_user, $limit);
 
+    } else if ($id_publisher == '10'){
+
+      function list_estherperel_episodes($id_podcast_post, $id_user, $limit){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+          $currenttime = $row['currenttime'];
+          if($currenttime != '0'){
+            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
+          }
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+      list_estherperel_episodes($id_podcast_post, $id_user, $limit);
+
+    } else if ($id_publisher == '11'){
+
+      function list_thenewyorktimes_episodes($id_podcast_post, $id_user, $limit){
+
+        $conn	= db();
+        foreach($conn->query("SELECT * FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ORDER BY date_publish DESC LIMIT $limit") as $row) {
+          $id = $row['id'];
+          $url = $row['url'];
+          $status = $row['status'];
+          $title = $row['title'];
+          $date_publish = $row['date_publish'];
+          $date_publish = strtotime($date_publish);
+          $date_publish = date("d/m/Y", $date_publish);
+          $id_podcast = $row['id_podcast'];
+          $currenttime = $row['currenttime'];
+          if($currenttime != '0'){
+            echo "<script> var x = document.getElementById('$id'); x.currentTime = $currenttime; </script>";
+          }
+
+          if($status == '1'){
+            $bg_color = "#1BCD48";
+            $opacity = "0.15";
+          } elseif($status == '0'){
+            $bg_color = "#111114";
+            $opacity = "1";
+          }
+
+          echo '
+          <div class="row justify-content-around mb-3">
+            <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
+              <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
+              <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+                <source src="'.$url.'" type="audio/mpeg">
+              </audio>
+            </div>
+            <div class="col-1 my-auto">
+              <div class="row justify-content-center">
+                <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
+                  <i class="fa-solid fa-check"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          ';
+        }
+        $conn	= NULL;
+
+      }
+      list_thenewyorktimes_episodes($id_podcast_post, $id_user, $limit);
+
     }
 
     // STATUS SWITCH ------------------------------------------------------------------------------------------
@@ -1173,6 +1239,7 @@ if(isset($_POST['func'])){
           $title = $row['title'];
           $id_publisher = $row['id_publisher'];
           $url = $row['url'];
+
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
           $query->execute();
         }
@@ -1180,51 +1247,36 @@ if(isset($_POST['func'])){
         $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
         $query->execute();
         $id_podcast_fetch = $query->fetchColumn();
-        //https://gimletmedia.com/shows/heavyweight/episodes#show-tab-picker
-        $html = file_get_html($url);
 
-        $i = 0;
-        foreach($html->find('.episode-card') as $title) {
-          $item_title = $title->find('.episode-title', 0)->plaintext;
-          if($i != 100){
-            $titles[] = $item_title;
-          }
-          $i++;
-        }
-        //print_r($titles);
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("$url");
 
-        $i = 0;
-        foreach($html->find('.episode-card') as $dateep) {
-          $item_dateep = $dateep->find('.episode-date', 0)->plaintext;
-          $finaldate = strtotime($item_dateep);
-          $finaldate = date('Y-m-d',$finaldate);
-          if($i != 100){
+        foreach($rss->channel->item as $item){
+            $titles[] = str_replace("'","", "{$item->title}");
+            $audiourls[] = "{$item->enclosure['url']}";
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
             $dateeps[] = $finaldate;
-          }
-          $i++;
         }
-        //print_r($dateeps);
-
-        $i = 0;
-        foreach($html->find('div[class=listen-now]') as $element){
-          $classurl = 'data-listen-now-player-url';
-          $audiourls[] = $element->$classurl;
-          $i++;
-        }
-        //print_r($audiourls);
 
         $arrlenght = count($titles);
         $today = date("Y-m-d");
+        $i = 0;
+
         for($i = 0; $i < $arrlenght; $i++){
+
           $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
           $query->execute();
+
           if($query->rowCount() == 0){
             $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
             $addurl->execute();
           }
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
         }
 
-        $conn	= NULL;
+          $conn	= NULL;
 
       }
     }
@@ -1262,7 +1314,7 @@ if(isset($_POST['func'])){
         $today = date("Y-m-d");
         $i = 0;
 
-        for($i = 1; $i < $arrlenght; $i++){
+        for($i = 0; $i < $arrlenght; $i++){
 
           $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
           $query->execute();
@@ -1273,6 +1325,7 @@ if(isset($_POST['func'])){
           }
           //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
         }
+        $conn	= NULL;
 
       }
     }
@@ -1285,6 +1338,7 @@ if(isset($_POST['func'])){
           $title = $row['title'];
           $id_publisher = $row['id_publisher'];
           $url = $row['url'];
+
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
           $query->execute();
         }
@@ -1292,32 +1346,18 @@ if(isset($_POST['func'])){
         $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
         $query->execute();
         $id_podcast_fetch = $query->fetchColumn();
-        $html = file_get_html($url);
 
-        foreach($html->find('.LTUrYb') as $title) {
-          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
-          $titles[] = $item_title;
-        }
-        //print_r($titles); die();
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("$url");
 
-        $i = 0;
-        $dateepsarr = array();
-        foreach($html->find('.oD3fme') as $dateep) {
-          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
-          $finaldate = strtotime($item_dateep);
-          $finaldate = date('Y-m-d',$finaldate);
-          $dateeps[] = $finaldate;
-          $i++;
+        foreach($rss->channel->item as $item){
+            $titles[] = str_replace("'","", "{$item->title}");
+            $audiourls[] = "{$item->enclosure['url']}";
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
+            $dateeps[] = $finaldate;
         }
-        //print_r($dateeps); die();
-
-        $i = 0;
-        foreach($html->find('div[jsdata]') as $title) {
-          $title_get =  $title->jsdata;
-          $title_get = explode(";",$title_get);
-          $audiourls[] = $title_get[1];
-        }
-        //print_r($audiourls); die();
 
         $arrlenght = count($titles);
         $today = date("Y-m-d");
@@ -1332,11 +1372,13 @@ if(isset($_POST['func'])){
             $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
             $addurl->execute();
           }
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
         }
 
-        $conn	= NULL;
+          $conn	= NULL;
 
       }
+
     }
 
     else if($id_publisher == '4'){
@@ -1410,6 +1452,7 @@ if(isset($_POST['func'])){
           $title = $row['title'];
           $id_publisher = $row['id_publisher'];
           $url = $row['url'];
+
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
           $query->execute();
         }
@@ -1417,29 +1460,18 @@ if(isset($_POST['func'])){
         $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
         $query->execute();
         $id_podcast_fetch = $query->fetchColumn();
-        $xml = simplexml_load_file("$url");
 
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("$url");
 
-        foreach($xml->channel->item as $title) {
-          $title_get = $title->title;
-          $titles[] = strval($title_get);
+        foreach($rss->channel->item as $item){
+            $titles[] = str_replace("'","", "{$item->title}");
+            $audiourls[] = "{$item->enclosure['url']}";
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
+            $dateeps[] = $finaldate;
         }
-        //print_r($titles).'<br>';
-
-        foreach($xml->channel->item as $title) {
-          $dateep_get = $title->pubDate;
-          $finaldate = strtotime($dateep_get);
-          $finaldate = date('Y-m-d',$finaldate);
-          $dateeps[] = strval($finaldate);
-        }
-        //print_r($dateeps).'<br>';
-
-        $xml = simplexml_load_file("$url");
-        foreach($xml->channel->item as $title) {
-          $audiourls_get = $title->enclosure->attributes();
-          $audiourls[] = strval($audiourls_get);
-        }
-        //print_r($audiourls).'<br>';
 
         $arrlenght = count($titles);
         $today = date("Y-m-d");
@@ -1454,9 +1486,10 @@ if(isset($_POST['func'])){
             $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
             $addurl->execute();
           }
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
         }
 
-        $conn	= NULL;
+          $conn	= NULL;
 
       }
     }
@@ -1469,6 +1502,7 @@ if(isset($_POST['func'])){
           $title = $row['title'];
           $id_publisher = $row['id_publisher'];
           $url = $row['url'];
+
           $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
           $query->execute();
         }
@@ -1476,32 +1510,18 @@ if(isset($_POST['func'])){
         $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
         $query->execute();
         $id_podcast_fetch = $query->fetchColumn();
-        $html = file_get_html($url);
 
-        foreach($html->find('.LTUrYb') as $title) {
-          $item_title = $title->find('.e3ZUqe', 0)->plaintext;
-          $titles[] = $item_title;
-        }
-        //print_r($titles); die();
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("$url");
 
-        $i = 0;
-        $dateepsarr = array();
-        foreach($html->find('.oD3fme') as $dateep) {
-          $item_dateep = $dateep->find('.OTz6ee', 0)->plaintext;
-          $finaldate = strtotime($item_dateep);
-          $finaldate = date('Y-m-d',$finaldate);
-          $dateeps[] = $finaldate;
-          $i++;
+        foreach($rss->channel->item as $item){
+            $titles[] = str_replace("'","", "{$item->title}");
+            $audiourls[] = "{$item->enclosure['url']}";
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
+            $dateeps[] = $finaldate;
         }
-        //print_r($dateeps); die();
-
-        $i = 0;
-        foreach($html->find('div[jsdata]') as $title) {
-          $title_get =  $title->jsdata;
-          $title_get = explode(";",$title_get);
-          $audiourls[] = $title_get[1];
-        }
-        //print_r($audiourls); die();
 
         $arrlenght = count($titles);
         $today = date("Y-m-d");
@@ -1516,9 +1536,10 @@ if(isset($_POST['func'])){
             $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
             $addurl->execute();
           }
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
         }
 
-        $conn	= NULL;
+          $conn	= NULL;
 
       }
     }
@@ -1709,6 +1730,105 @@ if(isset($_POST['func'])){
       }
     }
 
+    else if($id_publisher == '10'){
+      function add_estherperel_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("$url");
+
+        foreach($rss->channel->item as $item){
+            $titles[] = str_replace("'","", "{$item->title}");
+            $audiourls[] = "{$item->enclosure['url']}";
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
+            $dateeps[] = $finaldate;
+        }
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl->execute();
+          }
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
+        }
+
+          $conn	= NULL;
+
+      }
+    }
+
+    else if($id_publisher == '11'){
+      function add_thenewyorktimes_episodes($id_podcast, $user_id){
+
+        $conn	= db();
+        foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+          $title = $row['title'];
+          $id_publisher = $row['id_publisher'];
+          $url = $row['url'];
+
+          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$id_publisher', '$url', '$user_id') ");
+          $query->execute();
+        }
+
+        $query	= $conn->prepare("SELECT id FROM podcast ORDER BY id DESC LIMIT 0,1");
+        $query->execute();
+        $id_podcast_fetch = $query->fetchColumn();
+
+        //Pegando os dados do Feed RSS
+        $rss = simplexml_load_file("$url");
+
+        foreach($rss->channel->item as $item){
+            $titles[] = str_replace("'","", "{$item->title}");
+            $audiourls[] = "{$item->enclosure['url']}";
+            $item_dateep = "{$item->pubDate}";
+            $finaldate = strtotime($item_dateep);
+            $finaldate = date('Y-m-d',$finaldate);
+            $dateeps[] = $finaldate;
+        }
+
+        $arrlenght = count($titles);
+        $today = date("Y-m-d");
+        $i = 0;
+
+        for($i = 0; $i < $arrlenght; $i++){
+
+          $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+          $query->execute();
+
+          if($query->rowCount() == 0){
+            $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+            $addurl->execute();
+          }
+          //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
+        }
+        $conn	= NULL;
+
+      }
+    }
+
     if($id_publisher == '1'){
       add_gimlet_episodes($id_podcast, $user_id);
     } else if($id_publisher == '2'){
@@ -1727,7 +1847,14 @@ if(isset($_POST['func'])){
       add_npr_episodes($id_podcast, $user_id);
     } else if($id_publisher == '9'){
       add_globoplay_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '10'){
+      add_estherperel_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '11'){
+      add_thenewyorktimes_episodes($id_podcast, $user_id);
     }
+
+
+
 
 
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
