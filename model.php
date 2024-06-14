@@ -269,13 +269,8 @@ function update_wnyc_episodes($id_podcast, $user_id){
 
   for($i = 0; $i < $arrlenght; $i++){
 
-    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
-    $query->execute();
 
-    if($query->rowCount() == 0){
-      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
-      $addurl->execute();
-    }
+    echo "<br>".$titles[$i];
     //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
   }
   $conn	= NULL;
@@ -558,6 +553,52 @@ function update_thenewyorktimes_episodes($id_podcast, $user_id){
 }
 
 
+function update_rss_episodes($id_podcast, $user_id){
+  $conn	= db();
+
+  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
+  $query->execute();
+  if($query->rowCount() > 0){
+    $url_podcast_fetch = $query->fetchColumn();
+    $url = $url_podcast_fetch;
+  }
+
+  //Pegando os dados do Feed RSS
+  $rss = simplexml_load_file("$url");
+
+  foreach($rss->channel->item as $item){
+      preg_replace('/[^A-Za-z0-9\-]/', '', $item->title);
+      $titles[] = "{$item->title}";
+      $audiourls[] = "{$item->enclosure['url']}";
+      $item_dateep = "{$item->pubDate}";
+      $finaldate = strtotime($item_dateep);
+      $finaldate = date('Y-m-d',$finaldate);
+      $dateeps[] = $finaldate;
+  }
+
+  $arrlenght = count($titles);
+  $today = date("Y-m-d");
+  $i = 0;
+
+  print_r($titles);
+
+  /*
+  for($i = 0; $i < $arrlenght; $i++){
+
+    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
+    $query->execute();
+
+    if($query->rowCount() == 0){
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl->execute();
+    }
+    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
+  }
+  */
+  $conn	= NULL;
+}
+
+
 
 function update_podcasts($user_id){
 
@@ -586,6 +627,7 @@ function update_podcasts($user_id){
     if($query->rowCount() > 0){
       $id_publisher = $query->fetchColumn();
 
+      /*
       if($id_publisher == '1'){
         update_gimlet_episodes($podcast_id_fetch, $user_id);
       } else if($id_publisher == '2'){
@@ -608,7 +650,36 @@ function update_podcasts($user_id){
         update_estherperel_episodes($podcast_id_fetch, $user_id);
       } else if($id_publisher == '11'){
         update_thenewyorktimes_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '11'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
      }
+     */
+
+
+     if($id_publisher == '1'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '2'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '3'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '4'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '5'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '6'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '7'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '8'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '9'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '10'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+     } else if($id_publisher == '11'){
+       update_rss_episodes($podcast_id_fetch, $user_id);
+    }
+
 
     }
 
