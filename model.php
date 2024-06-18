@@ -554,6 +554,9 @@ function update_thenewyorktimes_episodes($id_podcast, $user_id){
 
 
 function update_rss_episodes($id_podcast, $user_id){
+
+  //echo '<br><br><br>'.$id_podcast.'  NOVOOOO 4<br>';
+
   $conn	= db();
 
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
@@ -567,7 +570,6 @@ function update_rss_episodes($id_podcast, $user_id){
   $rss = simplexml_load_file("$url");
 
   foreach($rss->channel->item as $item){
-      preg_replace('/[^A-Za-z0-9\-]/', '', $item->title);
       $titles[] = "{$item->title}";
       $audiourls[] = "{$item->enclosure['url']}";
       $item_dateep = "{$item->pubDate}";
@@ -576,26 +578,35 @@ function update_rss_episodes($id_podcast, $user_id){
       $dateeps[] = $finaldate;
   }
 
+  $titles = preg_replace("/[^a-zA-Z 0-9]+/", "", $titles );
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
 
-  print_r($titles);
 
-  /*
-  for($i = 0; $i < $arrlenght; $i++){
+  for($i = 3; $i >= 0; $i-=1){
+
+    //echo $i."<br>";
+    //echo $titles[$i]."<br>";
 
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
-
     if($query->rowCount() == 0){
+
       $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
       $addurl->execute();
+
+
+      //echo $titles[$i].'  -  '.$audiourls[$i].'  -  '.$dateeps[$i].'  -  '.$today.'  -  '.$id_podcast_fetch.'  -  '.$id_publisher.'  -  '.$user_id.'<br><br>';
+
     }
-    //echo $i."<br>".$titles[$i]."<br>".$audiourls[$i]."<br>".$dateeps[$i]."<br>".$today."<br>".$id_podcast_fetch."<br>".$id_publisher."<br>".$user_id."<br><br>";
+
+
   }
-  */
-  $conn	= NULL;
+
+  //$conn	= NULL;
+
+
 }
 
 
@@ -683,7 +694,11 @@ function update_podcasts($user_id){
 
     }
 
+
+
   }
+
+  //die();
 }
 
 // See if a func was sent
