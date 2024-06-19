@@ -8,7 +8,7 @@
 			$servername	= 'localhost';
 			$dbname		= 'appod';
 			$username	= 'root';
-			$password	= 'root';
+			$password	= '';
 			$port = 3306;
 		} else {
 			$servername	= 'localhost';

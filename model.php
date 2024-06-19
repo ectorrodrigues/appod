@@ -559,6 +559,11 @@ function update_rss_episodes($id_podcast, $user_id){
 
   $conn	= db();
 
+  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
+    $id_publisher = $row['id_publisher'];
+    $url = $row['url'];
+  }
+
   $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
   $query->execute();
   if($query->rowCount() > 0){
@@ -593,7 +598,7 @@ function update_rss_episodes($id_podcast, $user_id){
     $query->execute();
     if($query->rowCount() == 0){
 
-      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast_fetch', '$id_publisher', '$user_id', '0', '0')");
+      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')");
       $addurl->execute();
 
 
