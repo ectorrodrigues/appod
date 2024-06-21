@@ -32,48 +32,73 @@
 <body>
 
 <div class="container-fluid">
+
   <div class="row justify-content-center">
-    <?php
-      include 'inc/database.php';
-      $conn	= db();
+    <div class="col-6">
+      <?php
+        include 'inc/database.php';
+        $conn	= db();
 
-      if (isset($_GET['action'])) {
-        if ($_GET['action'] == 'add') {
-          $title = $_POST['title'];
-          $publisher = $_POST['publisher'];
-          $link = $_POST['link'];
-          $id_user = $_POST['id_user'];
-          $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$publisher', '$link', '$id_user') ");
-          $query->execute();
+        if (isset($_GET['action'])) {
+          if ($_GET['action'] == 'add_podcast') {
+            $title = $_POST['title'];
+            $publisher = $_POST['publisher'];
+            $link = $_POST['link'];
+            $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$publisher', '$link', '0') ");
+            $query->execute();
 
-          echo '<h1 class="text-center my-3">Done!</h1>';
+            echo '<h2 class="text-center my-3 text-success"><br>Podcast added!</h2>';
+          }
+          else if ($_GET['action'] == 'add_publisher') {
+            $title = $_POST['title'];
+            $query	= $conn->prepare("INSERT INTO publisher (title) VALUES ('$title') ");
+            $query->execute();
+
+            echo '<h2 class="text-center my-3 text-success"><br>Publisher added!</h2>';
+          }
         }
-      }
 
-    ?>
+      ?>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
     <div class="col-6 py-5">
-      <form action="?action=add" method="post" class="text-left">
+      <h1>Add Podcast</h1>
+      <form action="?action=add_podcast" method="post" class="text-left">
         <label>Name:</label><br>
-        <input type="text" name="title" class="col-12" value=""><br>
+        <input type="text" name="title" class="col-12 form-control" value=""><br>
         <label>Publisher:</label><br>
-        <select class="col-12" name="publisher">
-            <?php
-
+        <select class="col-12 form-control" name="publisher">
+          <?php
             foreach($conn->query(" SELECT * FROM publisher") as $row) {
               $title_pod = $row['title'];
               $id_publisher_pod = $row['id'];
               echo '<option value="'.$id_publisher_pod.'">'.$title_pod.'</option>';
             }
-
-            ?>
+          ?>
         </select><br>
         <label>Link:</label><br>
-        <input type="text" name="link" class="col-12" value=""><br>
-        <input type="hidden" name="id_user" class="col-12" value="0"><br>
-        <input type="submit" name="submit" value="Add">
+        <input type="text" name="link" class="col-12 form-control" value=""><br>
+        <input type="hidden" name="id_user" class="col-12 form-control" value="0"><br>
+        <input type="submit" name="submit" value="Add" class="btn btn-primary">
       </form>
     </div>
   </div>
+
+  <hr>
+
+  <div class="row justify-content-center">
+    <div class="col-6 py-5">
+      <h1>Add Publisher</h1>
+      <form action="?action=add_publisher" method="post" class="text-left">
+        <label>Name:</label><br>
+        <input type="text" name="title" class="col-12 form-control" value=""><br>
+        <input type="submit" name="submit" value="Add" class="btn btn-primary">
+      </form>
+    </div>
+  </div>
+
 </div>
 <?php $conn	= NULL; ?>
 

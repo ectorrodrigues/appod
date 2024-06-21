@@ -10,10 +10,6 @@ if(isset($_GET['id_user_update'])){
   header("Location:/appod");
 }
 
-// UPDATE PODCASTS ------------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------------------------------
 function update_rss_episodes($id_podcast, $user_id){
   
   $conn	= db();
@@ -60,6 +56,40 @@ function update_rss_episodes($id_podcast, $user_id){
 
 }
 
+function update_gimlet_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_b9_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_jovemnerd_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_central3_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_halfdeaf_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_wnyc_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_various_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_npr_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_globoplay_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_estherperel_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+function update_thenewyorktimes_episodes($id_podcast, $user_id){
+  update_rss_episodes($id_podcast, $user_id);
+}
+
 function update_podcasts($user_id){
 
   $podcast_arr = array();
@@ -84,20 +114,39 @@ function update_podcasts($user_id){
     $query->execute();
     if($query->rowCount() > 0){
       $id_publisher = $query->fetchColumn();
-
-      $conn	= db();
-      $id_publishers_array = array();
-      foreach($conn->query(" SELECT * FROM publisher") as $row) {
-        $id_publishers_array[] = $row['id'];
-      }
-      // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
-      // eg.: $exception = ["1", "10"];
-      $exception = [""];
-      $id_publishers_array = array_diff($id_publishers_array, $exception);
-      if(in_array($id_publisher, $id_publishers_array)){
-        update_rss_episodes($podcast_id_fetch, $user_id);
+      if($id_publisher == '1'){
+        update_gimlet_episodes($podcast_id_fetch, $user_id);
       } 
-
+      else if($id_publisher == '2'){
+        update_b9_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '3'){
+        update_jovemnerd_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '4'){
+        update_central3_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '5'){
+        update_halfdeaf_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '6'){
+        update_wnyc_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '7'){
+        update_various_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '8'){
+        update_npr_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '9'){
+        update_globoplay_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '10'){
+        update_estherperel_episodes($podcast_id_fetch, $user_id);
+      } 
+      else if($id_publisher == '11'){
+        update_thenewyorktimes_episodes($podcast_id_fetch, $user_id);
+      }
     }
   }
 
@@ -107,11 +156,10 @@ function update_podcasts($user_id){
 if(isset($_POST['func'])){
   $func = $_POST['func'];
 
-  // LIST PODCASTS --------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  if($func == 'list_episodes'){
+  if($func == 'update_podcasts'){
+  }
+
+  else if($func == 'list_episodes'){
 
     // Check the publisher
     $id_publisher = $_POST['id_publisher'];
@@ -173,24 +221,68 @@ if(isset($_POST['func'])){
       $conn	= NULL;
     }
 
-    $conn	= db();
-    $id_publishers_array = array();
-    foreach($conn->query(" SELECT * FROM publisher") as $row) {
-      $id_publishers_array[] = $row['id'];
-    }
-    // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
-    // eg.: $exception = ["1", "10"];
-    $exception = [""];
-    $id_publishers_array = array_diff($id_publishers_array, $exception);
-    if(in_array($id_publisher, $id_publishers_array)){
+    if($id_publisher == '1'){
       list_rss_episodes($id_podcast_post, $id_user, $limit);
     } 
+    else if ($id_publisher == '2'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '3'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '4'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '5'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '6'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '7'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '8'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '9'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '10'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
+    else if ($id_publisher == '11'){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    }
 
-    
-  // ADD PODCAST ----------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
+    // STATUS SWITCH ------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------
+  } else if($func == 'status_switch'){
+
+    function status_switch_action(){
+      $id = $_POST['id'];
+      $conn	= db();
+
+      $query = $conn->prepare(" SELECT status FROM episode WHERE id = '$id' ");
+      $query->execute();
+      $fetch = $query->fetchColumn();
+
+      if($fetch == '0'){
+        $switch = '1';
+      } elseif($fetch == '1'){
+        $switch = '0';
+      }
+
+      $query = $conn->prepare(" UPDATE episode SET status = '$switch' WHERE id = '$id' ");
+      $query->execute();
+
+      echo $switch;
+
+    }
+    status_switch_action();
+
+    // ADD PODCAST ------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------
   } else if($func == 'add_podcast'){
 
     // Check the publisher
@@ -250,13 +342,75 @@ if(isset($_POST['func'])){
     foreach($conn->query(" SELECT * FROM publisher") as $row) {
       $id_publishers_array[] = $row['id'];
     }
+
     // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
     // eg.: $exception = ["1", "10"];
     $exception = [""];
     $id_publishers_array = array_diff($id_publishers_array, $exception);
+
     if(in_array($id_publisher, $id_publishers_array)){
       add_rss_episodes($id_podcast, $user_id);
     } 
+
+    //OLD METHOD
+    /*
+    function add_gimlet_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_b9_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_jovemnerd_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_central3_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_halfdeaf_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_wnyc_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_various_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_npr_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_globoplay_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_estherperel_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    function add_thenewyorktimes_episodes($id_podcast, $user_id){
+      add_rss_episodes($id_podcast, $user_id);
+    }
+    
+    if($id_publisher == '1'){
+      add_gimlet_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '2'){
+      add_b9_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '3'){
+      add_jovemnerd_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '4'){
+      add_central3_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '5'){
+      add_halfdeaf_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '6'){
+      add_wnyc_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '7'){
+      add_various_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '8'){
+      add_npr_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '9'){
+      add_globoplay_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '10'){
+      add_estherperel_episodes($id_podcast, $user_id);
+    } else if($id_publisher == '11'){
+      add_thenewyorktimes_episodes($id_podcast, $user_id);
+    */
 
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
     $sitename = explode('/', $_SERVER['PHP_SELF']);
@@ -267,40 +421,8 @@ if(isset($_POST['func'])){
     header("Location:$header_url");
 
 
-  
-  // STATUS SWITCH ------------------------------------------------------------------------------------------
-  // --------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  } else if($func == 'status_switch'){
-
-    function status_switch_action(){
-      $id = $_POST['id'];
-      $conn	= db();
-
-      $query = $conn->prepare(" SELECT status FROM episode WHERE id = '$id' ");
-      $query->execute();
-      $fetch = $query->fetchColumn();
-
-      if($fetch == '0'){
-        $switch = '1';
-      } elseif($fetch == '1'){
-        $switch = '0';
-      }
-
-      $query = $conn->prepare(" UPDATE episode SET status = '$switch' WHERE id = '$id' ");
-      $query->execute();
-
-      echo $switch;
-
-    }
-    status_switch_action();
-
-    
-  // USER MANAGEMENT ------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
-  // ----------------------------------------------------------------------------------------------------------
+    // USER MANAGEMENT ------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------
   } else if($func == 'user'){
 
     if(isset($_POST['user'])){
