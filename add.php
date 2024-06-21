@@ -46,7 +46,6 @@
             $link = $_POST['link'];
             $query	= $conn->prepare("INSERT INTO podcast (title, id_publisher, url, id_user) VALUES ('$title', '$publisher', '$link', '0') ");
             $query->execute();
-
             echo '<h2 class="text-center my-3 text-success"><br>Podcast added!</h2>';
           }
           else if ($_GET['action'] == 'add_publisher') {
@@ -56,12 +55,32 @@
 
             echo '<h2 class="text-center my-3 text-success"><br>Publisher added!</h2>';
           }
+          else if ($_GET['action'] == 'edit_podcast') {           
+            $podcast = $_POST['podcast'];
+            $publisher = $_POST['publisher'];
+            $query	= $conn->prepare(" UPDATE podcast SET id_publisher = '$publisher' WHERE id = '$podcast' ");
+            $query->execute();
+            if(isset($_POST['link'])){
+              $link = $_POST['link'];
+              if($link !== ""){
+                $query	= $conn->prepare(" UPDATE podcast SET url = '$link' WHERE id = '$podcast' ");
+                $query->execute();
+              }
+            }
+            echo '<h2 class="text-center my-3 text-success"><br>Podcast edited!</h2>';
+          }         
         }
 
       ?>
     </div>
   </div>
 
+  <!--
+  ADD PODCAST -----------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -->
   <div class="row justify-content-center">
     <div class="col-6 py-5">
       <h1>Add Podcast</h1>
@@ -88,6 +107,55 @@
 
   <hr>
 
+  <!--
+  EDIT PODCAST ----------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -->
+  <div class="row justify-content-center">
+    <div class="col-6 py-5">
+      <h1>Edit Podcast</h1>
+      <form action="?action=edit_podcast" method="post" class="text-left">
+
+        <label>Podcast:</label><br>
+        <select class="col-12 form-control podcast" name="podcast">
+          <?php
+            foreach($conn->query(" SELECT * FROM podcast WHERE id_user ='0' ORDER BY title ASC") as $row) {
+              $id_pod = $row['id'];
+              $title_pod = $row['title'];
+              echo '<option value="'.$id_pod.'">'.$title_pod.'</option>';
+            }
+          ?>
+        </select><br>
+
+        <label>Publisher:</label><br>
+        <select class="col-12 form-control publisher" name="publisher">
+          <?php
+            foreach($conn->query(" SELECT * FROM publisher") as $row) {
+              $id_publisher = $row['id'];
+              $title_publisher = $row['title'];
+              echo '<option value="'.$id_publisher.'">'.$title_publisher.'</option>';
+            }
+          ?>
+        </select><br>
+
+        <label>URL:</label><br>
+        <input type="text" name="link" class="col-12 form-control" value="" placeholder="If you don't want to change, leave it blank "><br>
+        <input type="hidden" name="id_user" class="col-12 form-control" value="0"><br>
+        <input type="submit" name="submit" value="Add" class="btn btn-primary">
+      </form>
+    </div>
+  </div>
+
+  <hr>
+
+  <!--
+  ADD PUBLISHER ---------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -----------------------------------------------------------------------------------------------------
+  -->
   <div class="row justify-content-center">
     <div class="col-6 py-5">
       <h1>Add Publisher</h1>
