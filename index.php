@@ -28,7 +28,7 @@
       if($rowcount == 0){
         $bg_flag = '#111114';
       } else {
-        $bg_flag = '#ED0851';
+        $bg_flag = '#FF335E';
       }
 
       echo '
@@ -49,11 +49,11 @@
 
   ?>
 
-  <div class="loading">
+  <div class="loading" style="display:none;">
     <i class="fa fa-spinner red-text" aria-hidden="true"></i>
   </div>
 
-  <div class="fullscreen">
+  <div class="fullscreen" style="display:none;" >
     <div class="row justify-content-start">
       <div class="col-12 text-left">
         <div class="row justify-content-end">
@@ -122,18 +122,19 @@
 
   <div class="container-fluid">
 
-    <div class="row p-3 bottom-line flex">
+    <div class="row p-3 bottom-line flex nav-top">
 
       <div class="col-lg-4 col-12 text-lg-left text-center order-1 my-lg-auto my-5 logo">
-        <img src="inc/logo.svg" alt="logo" class="col-3 text-start">
+        <img src="inc/logo.svg" alt="logo" class="col-3 text-start" width="120" height="38">
       </div>
 
       <div class="col-lg-6 col-12 text-lg-left text-center order-2 mt-lg-0 mt-3 podcasts_select_form">
+        <!--
         <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline podcasts_select_form">
           <?php
+          /*
             $conn	= db();
-
-            echo '<select class="podcasts_select col-6" name="podcasts_select">';
+            echo '<label for="podcasts_select">Choose:</label><select class="podcasts_select col-6" name="podcasts_select">';
             echo '<option value="">Choose a podcast to add</option>';
             foreach($conn->query("SELECT * FROM podcast WHERE id_user = '0' ORDER BY title ASC ") as $row) {
               $id = $row['id'];
@@ -142,13 +143,14 @@
               echo '<option value="'.$id.'-'.$id_publisher.'-1">'.$title.'</option>';
             }
             echo '</select>';
-
             $conn	= NULL;
+            */
           ?>
           <input type="hidden" name="func" value="add_podcast">
           <input type="hidden" name="user_id" value="<?= $user_id ?>">
           <input type="submit" class="button transition" name="submit" value="+ add">
         </form>
+          -->
 
         <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="openlist()">
           <i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All
@@ -159,20 +161,20 @@
 
       </div>
 
-      <div class="col-lg-6 col-12 text-lg-right text-center mt-lg-0 mt-2 order-3">
-        <span class="login-form">
+      <div class="col-lg-6 col-12 text-lg-right text-center mt-lg-0 mt-2 order-3" >
+        <span class="login-form" style="display:none;">
           <span class="col-lg-3 col-12 message red-text mr-lg-2 mr-12"></span>
           <input type="text" name="user" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12" placeholder="user" id="user" value="">
           <input type="password" name="password" class="mr-lg-2 mr-0 d-inline-block col-lg-3 col-12 mb-lg-0 mb-4 mt-lg-0 mt-3 " placeholder="password" id="password" value="">
           <input type="submit" class="button transition d-inline-block mr-2 btnlogin mb-lg-0 mb-4" name="login" value="login" onClick="login('login')"> or &nbsp;
           <input type="submit" class="button transition d-inline-block red mb-lg-0 mb-4" name="newuser"  value="create user" onClick="login('newuser')">
         </span>
-        <span class="ml-2 logout" onClick="login('logout')">logout</span>
+        <span class="ml-2 logout" onClick="login('logout')" style="display:none;">logout</span>
       </div>
 
     </div>
 
-    <div class="row justify-content-center welcome mt-lg-0 mt-5 px-lg-0 px-5">
+    <div class="row justify-content-center welcome mt-lg-0 mt-5 px-lg-0 px-5" style="display:none;">
       <div class="mt-lg-5 pt-lg-5 mx-auto">
         <h1 class="mt-lg-5 pt-lg-5">
           shout out to
@@ -210,6 +212,7 @@
 
   </div>
 
+
 <script type="text/javascript">
 
     $( document ).ready(function() {
@@ -245,6 +248,8 @@
         function cookieaction() {
             var myCookie = getCookie("login");
             if (myCookie == null) {
+              $('.login-form').css('display', 'block');
+              $('.welcome').css('display', 'flex');
             } else {
               $('#episodes_container').show();
               $('.login-form').hide();

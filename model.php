@@ -389,9 +389,10 @@ if(isset($_POST['func'])){
           setcookie($cookie_name, $cookie_value, time() + (36000 * 30), "/"); // 10 HOURS - 86400 = 1 day
 
           //UPDATE PODCASTS
+          echo "<span style=\"color:#43F90C;\">you're in. </span>";
           update_podcasts($user_id);
 
-          echo "<span style=\"color:#43F90C;\">you're in. </span>";
+         
 
         } else {
           echo "wrong, try again. ";

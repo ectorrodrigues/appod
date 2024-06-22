@@ -17,6 +17,10 @@ body{
   cursor: pointer;
 }
 
+.nav-top{
+  min-height: 55px;
+}
+
 .aside{
   border-right:solid 1px #555;
 }
@@ -26,10 +30,12 @@ body{
   padding: 15px;
   font-size: 1em;
   cursor: pointer;
+  min-width: 289px;
+  min-height: 58px;
 }
 
 .flag-to-listen{
-  background-color: #ED0851;
+  background-color: #FF335E;
   min-width: 27px;
   height: 27px;
   padding: 2px 3px 6px 3px;
@@ -38,6 +44,8 @@ body{
   display: inline-block;
   color:#111114;
   font-weight: 700;
+  min-width: 27px;
+  min-height: 26px;
 }
 
 select, input[type='text'], input[type='password']{
@@ -91,12 +99,12 @@ input{
 }
 
 .red{
-  background-color: #ED0851;
-  background: #ED0851 !important;
+  background-color: #FF335E;
+  background: #FF335E !important;
 }
 
 .red-text{
-  color: #ED0851;
+  color: #FF335E;
 }
 
 .logout{
@@ -126,7 +134,7 @@ input{
 }
 
 .remove-yes:hover{
-  color: #ED0851;
+  color: #FF335E;
 }
 
 .remove-no:hover{
