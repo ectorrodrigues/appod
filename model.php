@@ -120,10 +120,10 @@ if(isset($_POST['func'])){
     $limit = $_POST['limit'];
 
     echo '
-    <div class="row justify-content-end mb-3 mt-1">
-      <div class="col-12 text-right">
-        <span onclick="remove(\''.$id_podcast_post.'\', \''.$id_user.'\')" class="cursor-pointer hover-blue">remove podcast</span>
-        <span class="ml-4 cursor-pointer hover-blue" onclick="markall(\''.$id_podcast_post.'\', \''.$id_user.'\')">mark all as listened</span>
+    <div class="row justify-content-end mb-3 mb-lg-0 mt-1">
+      <div class="col-12 text-center text-lg-right edit-buttons">
+        <span onclick="remove(\''.$id_podcast_post.'\', \''.$id_user.'\')" class="cursor-pointer hover-blue"><i class="fa-solid fa-xmark"></i> remove podcast</span>
+        <span class="ml-4 cursor-pointer hover-blue" onclick="markall(\''.$id_podcast_post.'\', \''.$id_user.'\')"><i class="fa-regular fa-circle-check"></i> mark all as listened</span>
       </div>
     </div>';
 
@@ -153,15 +153,19 @@ if(isset($_POST['func'])){
         }
 
         echo '
+        <div class="row justify-content-start mt-4 mt-lg-0">
+          <div class="col-12 px-4 mb-0 episode-title">'.$title.'</div>
+          <div class="col-12 px-4 mb-1 date-publish">'.$date_publish.'</div>
+        </div>
         <div class="row justify-content-around mb-3">
+        
           <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
-            <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-            <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+            <audio controls id='.$id.' class="col-12 px-0" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
               <source src="'.$url.'" type="audio/mpeg">
             </audio>
           </div>
           <div class="col-1 my-auto">
-            <div class="row justify-content-center">
+            <div class="row justify-content-left status-circle-container">
               <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
                 <i class="fa-solid fa-check"></i>
               </div>

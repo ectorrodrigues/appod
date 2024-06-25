@@ -32,11 +32,11 @@
       }
 
       echo '
-      <div class="podcasts_menu_items row" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\', \'15\')">
-        <div class="col-lg-10 col-9">
+      <div class="podcasts_menu_items row '.$id.'" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\', \'15\')">
+        <div class="col-lg-10 col-10">
           '.$title.'
         </div>
-        <div class="col-lg-2 col-3">
+        <div class="col-lg-2 col-2">
           <div class="flag-to-listen podcast_flag_'.$id.'" style="background-color:'.$bg_flag.';">
             '.$rowcount.'
           </div>
@@ -44,6 +44,13 @@
       </div>';
     }
 
+    echo '
+    <div class="row justify-content-center">
+    <div class="text-center my-3 see-feed cursor-pointer" style="display:none;" onclick="seefeed()">
+      <i class="fa-solid fa-rss"></i>  See all feed
+    </div>
+  </div>
+    ';
     $conn	= NULL;
   }
 
@@ -56,7 +63,7 @@
   <div class="fullscreen" style="display:none;" >
     <div class="row justify-content-start">
       <div class="col-12 text-left">
-        <div class="row justify-content-end">
+        <div class="row justify-content-end mb-3">
           <i class="fa fa-times-circle-o red-text text-right cursor-pointer transition" aria-hidden="true" onclick="closelist()"></i>
         </div>
         <div class="row justify-content-start">
@@ -67,7 +74,7 @@
               $id_publisher = $row['id'];
               $title_publisher = $row['title'];
 
-              echo '<div class="col-lg-4 col-12 p-5">
+              echo '<div class="col-lg-4 col-12 pl-5 pr-0 pr-lg-5 pb-3">
                       <div class="publisher_title">'.$title_publisher.'</div>';
 
               foreach($conn->query("SELECT * FROM podcast WHERE id_publisher = '$id_publisher' AND id_user = '0'  ORDER BY title ASC ") as $row) {
@@ -125,10 +132,10 @@
     <div class="row p-3 bottom-line flex nav-top">
 
       <div class="col-lg-4 col-12 text-lg-left text-center order-1 my-lg-auto my-5 logo">
-        <img src="inc/logo.svg" alt="logo" class="col-3 text-start" width="120" height="38">
+        <img src="inc/logo.svg" alt="logo" class="col-lg-3 col-12 text-start" width="120" height="38">
       </div>
 
-      <div class="col-lg-6 col-12 text-lg-left text-center order-2 mt-lg-0 mt-3 podcasts_select_form">
+      <div class="col-lg-6 col-12 text-lg-left text-left order-2 mt-lg-0 mt-0 podcasts_select_form">
         <!--
         <form action="model.php" method="post" enctype="multipart/form-data" class="d-inline podcasts_select_form">
           <?php
@@ -147,16 +154,16 @@
             */
           ?>
           <input type="hidden" name="func" value="add_podcast">
-          <input type="hidden" name="user_id" value="<?= $user_id ?>">
+          <input type="hidden" name="user_id" value="<?php // echo $user_id; ?>">
           <input type="submit" class="button transition" name="submit" value="+ add">
         </form>
           -->
 
-        <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="openlist()">
+        <div class="d-inline-block ml-0 ml-lg-0 cursor-pointer openlist transition" onclick="openlist()">
           <i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All
         </div>
-        <div class="d-inline-block ml-4 cursor-pointer openlist transition" onclick="update_episodes(<?= $user_id ?>)">
-          <i class="fa fa-refresh" aria-hidden="true"></i> Update
+        <div class="d-inline-block ml-4 cursor-pointer openlist transition color666" onclick="update_episodes(<?= $user_id ?>)">
+          <i class="fa fa-refresh" aria-hidden="true"></i>
         </div>
 
       </div>
@@ -169,14 +176,14 @@
           <input type="submit" class="button transition d-inline-block mr-2 btnlogin mb-lg-0 mb-4" name="login" value="login" onClick="login('login')"> or &nbsp;
           <input type="submit" class="button transition d-inline-block red mb-lg-0 mb-4" name="newuser"  value="create user" onClick="login('newuser')">
         </span>
-        <span class="ml-2 logout" onClick="login('logout')" style="display:none;">logout</span>
+        <span class="ml-2 logout color666" onClick="login('logout')" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i></span>
       </div>
 
     </div>
 
     <div class="row justify-content-center welcome mt-lg-0 mt-5 px-lg-0 px-5" style="display:none;">
       <div class="mt-lg-5 pt-lg-5 mx-auto">
-        <h1 class="mt-lg-5 pt-lg-5">
+        <h1 class="mt-lg-5 pt-lg-5 shout">
           shout out to
         </h1>
         <h2>
@@ -195,11 +202,11 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-3 col-4 aside">
+      <div class="col-lg-3 aside">
         <?php podcasts_menu(); ?>
       </div>
 
-      <div class="col-lg-9 col-8 px-5 py-3" id="episodes_container">
+      <div class="col-lg-9 col-12 px-4 px-lg-5 py-0 py-lg-3" id="episodes_container">
 
       </div>
     </div>
@@ -320,6 +327,13 @@
 
       request.done(function(msg) {
         $("#episodes_container").html(msg+'<div class="row justify-content-center text-center mt-3 seeall" onClick="list_episodes(\''+id_podcast+'\', \''+id_publisher_post+'\', \''+user_id+'\', \'500\')" ><div class="col-12 text-center cursor-pointer">See All</div></div>');
+
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+          $('.podcasts_menu_items').hide();
+          $('.'+id_podcast).show();
+          $('.see-feed').show();
+        }
+        
       });
 
       request.fail(function(jqXHR, textStatus) {
@@ -436,6 +450,10 @@
 
     function update_episodes(id_user){
       window.location.href = "model.php?id_user_update="+id_user;
+    }
+
+    function seefeed(){
+      window.location.href = "";
     }
 
 

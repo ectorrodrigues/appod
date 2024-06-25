@@ -5,16 +5,21 @@ body{
   font-size: 15px;
 }
 
+.status-circle-container{
+  margin-top: -30px;
+}
+
 .status-circle{
   width: 40px;
   height: 40px;
-  border:solid 1px #555;
+  border:solid 1px #232327;
   border-radius: 20px;
-  color:#333;
+  color:#232327;
   font-size: 1.2em;
   text-align: center;
   padding-top:5px;
   cursor: pointer;
+  margin-top: 25px;
 }
 
 .nav-top{
@@ -22,11 +27,11 @@ body{
 }
 
 .aside{
-  border-right:solid 1px #555;
+  border-right:solid 1px #232327;
 }
 
 .podcasts_menu_items{
-  border-bottom:solid 1px #555;
+  border-bottom:solid 1px #232327;
   padding: 15px;
   font-size: 1em;
   cursor: pointer;
@@ -60,7 +65,7 @@ select, input[type='text'], input[type='password']{
 input{
   background-color: #111114 !important;
   color:#eee !important;
-  border:solid 1px #555;
+  border:solid 1px #232327;
 }
 
 .button{
@@ -87,7 +92,7 @@ input{
 }
 
 .bottom-line{
-  border-bottom:solid 1px #555;
+  border-bottom:solid 1px #232327;
 }
 
 .transition{
@@ -148,8 +153,7 @@ input{
   height: 800%;
   z-index: 1000;
   margin: 0;
-  padding: 50px;
-
+  padding: 25px 50px 50px 50px;
 }
 
 .podcasts-list select{
@@ -237,6 +241,24 @@ h2{
   font-style: italic;
 }
 
+.date-publish{
+  font-size: 0.8em;
+  color: #666;
+  margin-top: -2px;
+}
+
+.episode-title{
+  line-height: 1.2em;
+}
+
+.edit-buttons{
+  color: #666;
+}
+
+.color666{
+  color: #666;
+}
+
 
 
 /* -------------------------------------------------------------------------------------------------------
@@ -250,7 +272,11 @@ h2{
 
 @media only screen and (min-device-width: 10px) and (max-device-width: 575px) {
   body{
-    font-size:24px;
+    font-size:20px;
+  }
+
+  h2{
+    font-size: 3em;
   }
 
   .message{
@@ -284,7 +310,9 @@ h2{
   }
 
   .flag-to-listen{
-      padding:5px 10px 40px 10px;
+      /*padding:5px 10px 40px 10px;*/
+      min-width: 35px;
+      min-height: 35px;
       border-radius:20px;
   }
 
@@ -295,5 +323,32 @@ h2{
 
   .signature{
     position: fixed;
+  }
+  .shout{
+    font-size: 2.1em !important;
+    text-align: center !important;
+  }
+  .welcome h2{
+    text-align: center !important;
+  }
+  .logo img{
+    width: 600px !important;
+  }
+  .status-circle-container{
+    margin-top: -30px;
+  }
+  .status-circle{
+    margin-top:25px;
+    font-size: 0.9em;
+    width: 30px;
+  }
+  .date-publish{
+    margin-top: -5px;
+  }
+  .fullscreen{
+    padding: 20px 30px 0 0;
+  }
+  .edit-buttons{
+    font-size: 0.9em;
   }
 }
