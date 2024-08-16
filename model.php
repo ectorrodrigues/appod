@@ -41,7 +41,14 @@ function update_rss_episodes($id_podcast, $user_id){
       $dateeps[] = $finaldate;
   }
 
-  $titles = preg_replace("/[^a-zA-Z 0-9]+/", "", $titles );
+  function slug($str){
+    $slug = array( '\`'=>'', '\''=>'', '"'=>'' );
+    $slug = strtolower(strtr( $str, $slug ));
+    return $slug;
+  } //endfunction
+
+  //$titles = preg_replace("/[^a-zA-Z 0-9]+/", "", $titles );
+  $titles = slug($titles);
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
@@ -446,6 +453,13 @@ if(isset($_POST['func'])){
       setcookie("login", "", time() - 3600);
       unset($_COOKIE['login']);
       setcookie('login', null, -1, '/');
+
+      //$_SERVER['HTTP_HOST'];
+
+      if (str_contains('How are you', 'localhost')) { 
+        //echo 'true';
+      }
+
       $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
       $sitename = explode('/', $_SERVER['PHP_SELF']);
       array_shift($sitename);
@@ -453,6 +467,8 @@ if(isset($_POST['func'])){
       $sitename = implode('/', $sitename);
       $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
       header("Location:$header_url");
+
+
 
     }
      else {
@@ -469,10 +485,11 @@ if(isset($_POST['func'])){
 
       $query	= $conn->prepare("UPDATE episode SET status = '1' WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user'");
       $query->execute();
-
+      /*
       foreach($conn->query("SELECT id FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
         echo $row['id'].',';
       }
+      */
     }
     markall($id_podcast_post, $id_user);
 
