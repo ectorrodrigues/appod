@@ -299,7 +299,7 @@ if(isset($_POST['func'])){
         $switch = '0';
       }
 
-      $query = $conn->prepare(" UPDATE episode SET status = '$switch' WHERE id = '$id' ");
+      $query = $conn->prepare(" UPDATE episode SET status = '$switch', currenttime = '0' WHERE id = '$id' ");
       $query->execute();
 
       echo $switch;
@@ -483,7 +483,7 @@ if(isset($_POST['func'])){
     function markall($id_podcast_post, $id_user){
       $conn	= db();
 
-      $query	= $conn->prepare("UPDATE episode SET status = '1' WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user'");
+      $query	= $conn->prepare("UPDATE episode SET status = '1', currenttime = '0' WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user'");
       $query->execute();
       /*
       foreach($conn->query("SELECT id FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
