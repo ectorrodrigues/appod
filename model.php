@@ -7,7 +7,7 @@ if(isset($_GET['id_user_update'])){
   $id_user_update = $_GET['id_user_update'];
   //echo $id_user_update; die();
   update_podcasts($id_user_update);
-  header("Location:/appod");
+  header("Location:/resources/appod");
 }
 
 // UPDATE PODCASTS ------------------------------------------------------------------------------------------
@@ -269,13 +269,15 @@ if(isset($_POST['func'])){
       add_rss_episodes($id_podcast, $user_id);
     } 
 
+    /*
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
     $sitename = explode('/', $_SERVER['PHP_SELF']);
     array_shift($sitename);
     array_pop($sitename);
     $sitename = implode('/', $sitename);
     $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
-    header("Location:$header_url");
+    */
+    header("Location:/resources/appod");
 
 
   
@@ -460,13 +462,15 @@ if(isset($_POST['func'])){
         //echo 'true';
       }
 
+      /*
       $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
       $sitename = explode('/', $_SERVER['PHP_SELF']);
       array_shift($sitename);
       array_pop($sitename);
       $sitename = implode('/', $sitename);
       $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
-      header("Location:$header_url");
+      */
+      header("Location:/resources/appod");
 
 
 
