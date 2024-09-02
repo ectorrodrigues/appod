@@ -7,7 +7,11 @@ if(isset($_GET['id_user_update'])){
   $id_user_update = $_GET['id_user_update'];
   //echo $id_user_update; die();
   update_podcasts($id_user_update);
+<<<<<<< HEAD
   header("Location:/resources/appod/");
+=======
+  header("Location:/resources/appod");
+>>>>>>> 6270d5de6086629f952ab8e3cc81979adc45ea05
 }
 
 // UPDATE PODCASTS ------------------------------------------------------------------------------------------
@@ -41,7 +45,18 @@ function update_rss_episodes($id_podcast, $user_id){
       $dateeps[] = $finaldate;
   }
 
+<<<<<<< HEAD
   $titles = str_replace(array('\`', '\'', '\"'), ' ', $titles);
+=======
+  function slug($str){
+    $slug = array( '\`'=>'', '\''=>'', '"'=>'' );
+    $slug = strtolower(strtr( $str, $slug ));
+    return $slug;
+  } //endfunction
+
+  //$titles = preg_replace("/[^a-zA-Z 0-9]+/", "", $titles );
+  $titles = slug($titles);
+>>>>>>> 6270d5de6086629f952ab8e3cc81979adc45ea05
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
@@ -270,7 +285,11 @@ if(isset($_POST['func'])){
     $sitename = implode('/', $sitename);
     $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
     */
+<<<<<<< HEAD
     header("Location:/resources/appod/");
+=======
+    header("Location:/resources/appod");
+>>>>>>> 6270d5de6086629f952ab8e3cc81979adc45ea05
 
 
   
@@ -454,6 +473,10 @@ if(isset($_POST['func'])){
       if (str_contains('How are you', 'localhost')) { 
         //echo 'true';
       }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 6270d5de6086629f952ab8e3cc81979adc45ea05
       /*
       $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
       $sitename = explode('/', $_SERVER['PHP_SELF']);
@@ -461,9 +484,14 @@ if(isset($_POST['func'])){
       array_pop($sitename);
       $sitename = implode('/', $sitename);
       $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+<<<<<<< HEAD
       header("Location:$header_url");
       */
       header("Location:/resources/appod/");
+=======
+      */
+      header("Location:/resources/appod");
+>>>>>>> 6270d5de6086629f952ab8e3cc81979adc45ea05
 
 
 
