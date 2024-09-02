@@ -7,9 +7,33 @@ if(isset($_GET['id_user_update'])){
   $id_user_update = $_GET['id_user_update'];
   //echo $id_user_update; die();
   update_podcasts($id_user_update);
-  header("Location:/appod");
+  if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+    $protocol = 'https://';
+  } else {
+      $protocol = 'http://';
+  }
+  $sitename = explode('/', $_SERVER['PHP_SELF']);
+  array_shift($sitename);
+  array_pop($sitename);
+  $sitename = implode('/', $sitename);
+  
+
+  if($_SERVER['HTTP_HOST'] == 'localhost'){
+      $server = 'localhost/';
+  } else {
+      $server = 'mova.ppg.br/resources/appod';
+      $sitename = rtrim($sitename, "/");
+      $sitename = '';
+  }
+
+  $header_url = $protocol.$server.$sitename;
+  header("Location:$header_url");
 }
 
+// UPDATE PODCASTS ------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------
 function update_rss_episodes($id_podcast, $user_id){
   
   $conn	= db();
@@ -56,40 +80,6 @@ function update_rss_episodes($id_podcast, $user_id){
 
 }
 
-function update_gimlet_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_b9_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_jovemnerd_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_central3_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_halfdeaf_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_wnyc_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_various_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_npr_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_globoplay_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_estherperel_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-function update_thenewyorktimes_episodes($id_podcast, $user_id){
-  update_rss_episodes($id_podcast, $user_id);
-}
-
 function update_podcasts($user_id){
 
   $podcast_arr = array();
@@ -114,39 +104,20 @@ function update_podcasts($user_id){
     $query->execute();
     if($query->rowCount() > 0){
       $id_publisher = $query->fetchColumn();
-      if($id_publisher == '1'){
-        update_gimlet_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '2'){
-        update_b9_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '3'){
-        update_jovemnerd_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '4'){
-        update_central3_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '5'){
-        update_halfdeaf_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '6'){
-        update_wnyc_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '7'){
-        update_various_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '8'){
-        update_npr_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '9'){
-        update_globoplay_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '10'){
-        update_estherperel_episodes($podcast_id_fetch, $user_id);
-      } 
-      else if($id_publisher == '11'){
-        update_thenewyorktimes_episodes($podcast_id_fetch, $user_id);
+
+      $conn	= db();
+      $id_publishers_array = array();
+      foreach($conn->query(" SELECT * FROM publisher") as $row) {
+        $id_publishers_array[] = $row['id'];
       }
+      // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
+      // eg.: $exception = ["1", "10"];
+      $exception = [""];
+      $id_publishers_array = array_diff($id_publishers_array, $exception);
+      if(in_array($id_publisher, $id_publishers_array)){
+        update_rss_episodes($podcast_id_fetch, $user_id);
+      } 
+
     }
   }
 
@@ -156,10 +127,11 @@ function update_podcasts($user_id){
 if(isset($_POST['func'])){
   $func = $_POST['func'];
 
-  if($func == 'update_podcasts'){
-  }
-
-  else if($func == 'list_episodes'){
+  // LIST PODCASTS --------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  if($func == 'list_episodes'){
 
     // Check the publisher
     $id_publisher = $_POST['id_publisher'];
@@ -168,10 +140,10 @@ if(isset($_POST['func'])){
     $limit = $_POST['limit'];
 
     echo '
-    <div class="row justify-content-end mb-3 mt-1">
-      <div class="col-12 text-right">
-        <span onclick="remove(\''.$id_podcast_post.'\', \''.$id_user.'\')" class="cursor-pointer hover-blue">remove podcast</span>
-        <span class="ml-4 cursor-pointer hover-blue" onclick="markall(\''.$id_podcast_post.'\', \''.$id_user.'\')">mark all as listened</span>
+    <div class="row justify-content-end mb-3 mb-lg-0 mt-1">
+      <div class="col-12 text-center text-lg-right edit-buttons">
+        <span onclick="remove(\''.$id_podcast_post.'\', \''.$id_user.'\')" class="cursor-pointer hover-blue"><i class="fa-solid fa-xmark"></i> remove podcast</span>
+        <span class="ml-4 cursor-pointer hover-blue" onclick="markall(\''.$id_podcast_post.'\', \''.$id_user.'\')"><i class="fa-regular fa-circle-check"></i> mark all as listened</span>
       </div>
     </div>';
 
@@ -201,15 +173,19 @@ if(isset($_POST['func'])){
         }
 
         echo '
+        <div class="row justify-content-start mt-4 mt-lg-0">
+          <div class="col-12 px-4 mb-0 episode-title">'.$title.'</div>
+          <div class="col-12 px-4 mb-1 date-publish">'.$date_publish.'</div>
+        </div>
         <div class="row justify-content-around mb-3">
+        
           <div class="col-11 my-auto" style="opacity:'.$opacity.';" id="col_episode_'.$id.'">
-            <div class="col-12 px-4 mb-1">'.$title.' - '.$date_publish.'</div>
-            <audio controls id='.$id.' class="col-12" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
+            <audio controls id='.$id.' class="col-12 px-0" onpause="getcurrenttime(\''.$id.'\')" onended="status_switch(this.id, \''.$id_podcast.'\')">
               <source src="'.$url.'" type="audio/mpeg">
             </audio>
           </div>
           <div class="col-1 my-auto">
-            <div class="row justify-content-center">
+            <div class="row justify-content-left status-circle-container">
               <div class="status-circle status_'.$id.'" id="'.$id.'" onClick="status_switch(this.id, \''.$id_podcast.'\')" style="background-color:'.$bg_color.';">
                 <i class="fa-solid fa-check"></i>
               </div>
@@ -221,68 +197,24 @@ if(isset($_POST['func'])){
       $conn	= NULL;
     }
 
-    if($id_publisher == '1'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '2'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '3'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '4'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '5'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '6'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '7'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '8'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '9'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '10'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
-    } 
-    else if ($id_publisher == '11'){
-      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    $conn	= db();
+    $id_publishers_array = array();
+    foreach($conn->query(" SELECT * FROM publisher") as $row) {
+      $id_publishers_array[] = $row['id'];
     }
+    // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
+    // eg.: $exception = ["1", "10"];
+    $exception = [""];
+    $id_publishers_array = array_diff($id_publishers_array, $exception);
+    if(in_array($id_publisher, $id_publishers_array)){
+      list_rss_episodes($id_podcast_post, $id_user, $limit);
+    } 
 
-    // STATUS SWITCH ------------------------------------------------------------------------------------------
-    // --------------------------------------------------------------------------------------------------------
-  } else if($func == 'status_switch'){
 
-    function status_switch_action(){
-      $id = $_POST['id'];
-      $conn	= db();
-
-      $query = $conn->prepare(" SELECT status FROM episode WHERE id = '$id' ");
-      $query->execute();
-      $fetch = $query->fetchColumn();
-
-      if($fetch == '0'){
-        $switch = '1';
-      } elseif($fetch == '1'){
-        $switch = '0';
-      }
-
-      $query = $conn->prepare(" UPDATE episode SET status = '$switch' WHERE id = '$id' ");
-      $query->execute();
-
-      echo $switch;
-
-    }
-    status_switch_action();
-
-    // ADD PODCAST ------------------------------------------------------------------------------------------
-    // --------------------------------------------------------------------------------------------------------
+  // ADD PODCAST ----------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
   } else if($func == 'add_podcast'){
 
     // Check the publisher
@@ -342,87 +274,71 @@ if(isset($_POST['func'])){
     foreach($conn->query(" SELECT * FROM publisher") as $row) {
       $id_publishers_array[] = $row['id'];
     }
-
     // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
     // eg.: $exception = ["1", "10"];
     $exception = [""];
     $id_publishers_array = array_diff($id_publishers_array, $exception);
-
     if(in_array($id_publisher, $id_publishers_array)){
       add_rss_episodes($id_podcast, $user_id);
     } 
 
-    //OLD METHOD
-    /*
-    function add_gimlet_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
+    if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+      $protocol = 'https://';
+    } else {
+        $protocol = 'http://';
     }
-    function add_b9_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_jovemnerd_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_central3_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_halfdeaf_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_wnyc_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_various_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_npr_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_globoplay_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_estherperel_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    function add_thenewyorktimes_episodes($id_podcast, $user_id){
-      add_rss_episodes($id_podcast, $user_id);
-    }
-    
-    if($id_publisher == '1'){
-      add_gimlet_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '2'){
-      add_b9_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '3'){
-      add_jovemnerd_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '4'){
-      add_central3_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '5'){
-      add_halfdeaf_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '6'){
-      add_wnyc_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '7'){
-      add_various_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '8'){
-      add_npr_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '9'){
-      add_globoplay_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '10'){
-      add_estherperel_episodes($id_podcast, $user_id);
-    } else if($id_publisher == '11'){
-      add_thenewyorktimes_episodes($id_podcast, $user_id);
-    */
-
-    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
     $sitename = explode('/', $_SERVER['PHP_SELF']);
     array_shift($sitename);
     array_pop($sitename);
     $sitename = implode('/', $sitename);
-    $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+    
+
+    if($_SERVER['HTTP_HOST'] == 'localhost'){
+        $server = 'localhost/';
+    } else {
+        $server = 'mova.ppg.br/resources/appod';
+        $sitename = rtrim($sitename, "/");
+        $sitename = '';
+    }
+
+    $header_url = $protocol.$server.$sitename;
     header("Location:$header_url");
 
 
-    // USER MANAGEMENT ------------------------------------------------------------------------------------------
-    // --------------------------------------------------------------------------------------------------------
+  
+  // STATUS SWITCH ------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  } else if($func == 'status_switch'){
+
+    function status_switch_action(){
+      $id = $_POST['id'];
+      $conn	= db();
+
+      $query = $conn->prepare(" SELECT status FROM episode WHERE id = '$id' ");
+      $query->execute();
+      $fetch = $query->fetchColumn();
+
+      if($fetch == '0'){
+        $switch = '1';
+      } elseif($fetch == '1'){
+        $switch = '0';
+      }
+
+      $query = $conn->prepare(" UPDATE episode SET status = '$switch' WHERE id = '$id' ");
+      $query->execute();
+
+      echo $switch;
+
+    }
+    status_switch_action();
+
+    
+  // USER MANAGEMENT ------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
+  // ----------------------------------------------------------------------------------------------------------
   } else if($func == 'user'){
 
     if(isset($_POST['user'])){
@@ -511,9 +427,10 @@ if(isset($_POST['func'])){
           setcookie($cookie_name, $cookie_value, time() + (36000 * 30), "/"); // 10 HOURS - 86400 = 1 day
 
           //UPDATE PODCASTS
+          echo "<span style=\"color:#43F90C;\">you're in. </span>";
           update_podcasts($user_id);
 
-          echo "<span style=\"color:#43F90C;\">you're in. </span>";
+         
 
         } else {
           echo "wrong, try again. ";
@@ -563,12 +480,27 @@ if(isset($_POST['func'])){
       setcookie("login", "", time() - 3600);
       unset($_COOKIE['login']);
       setcookie('login', null, -1, '/');
-      $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
+      if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        $protocol = 'https://';
+      } else {
+          $protocol = 'http://';
+      }
       $sitename = explode('/', $_SERVER['PHP_SELF']);
       array_shift($sitename);
       array_pop($sitename);
       $sitename = implode('/', $sitename);
-      $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
+      
+
+      if($_SERVER['HTTP_HOST'] == 'localhost'){
+          $server = 'localhost/';
+      } else {
+          $server = 'mova.ppg.br/resources/appod';
+          $sitename = rtrim($sitename, "/");
+          $sitename = '';
+      }
+
+      $header_url = $protocol.$server.$sitename;
+      
       header("Location:$header_url");
 
     }

@@ -7,7 +7,7 @@ if(isset($_GET['id_user_update'])){
   $id_user_update = $_GET['id_user_update'];
   //echo $id_user_update; die();
   update_podcasts($id_user_update);
-  header("Location:/appod");
+  header("Location:/resources/appod/");
 }
 
 // UPDATE PODCASTS ------------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ function update_rss_episodes($id_podcast, $user_id){
       $dateeps[] = $finaldate;
   }
 
-  $titles = preg_replace("/[^a-zA-Z 0-9]+/", "", $titles );
+  $titles = str_replace(array('\`', '\'', '\"'), ' ', $titles);
   $arrlenght = count($titles);
   $today = date("Y-m-d");
   $i = 0;
@@ -262,13 +262,15 @@ if(isset($_POST['func'])){
       add_rss_episodes($id_podcast, $user_id);
     } 
 
+    /*
     $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
     $sitename = explode('/', $_SERVER['PHP_SELF']);
     array_shift($sitename);
     array_pop($sitename);
     $sitename = implode('/', $sitename);
     $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
-    header("Location:$header_url");
+    */
+    header("Location:/resources/appod/");
 
 
   
@@ -292,7 +294,7 @@ if(isset($_POST['func'])){
         $switch = '0';
       }
 
-      $query = $conn->prepare(" UPDATE episode SET status = '$switch' WHERE id = '$id' ");
+      $query = $conn->prepare(" UPDATE episode SET status = '$switch', currenttime = '0' WHERE id = '$id' ");
       $query->execute();
 
       echo $switch;
@@ -446,6 +448,13 @@ if(isset($_POST['func'])){
       setcookie("login", "", time() - 3600);
       unset($_COOKIE['login']);
       setcookie('login', null, -1, '/');
+
+      //$_SERVER['HTTP_HOST'];
+
+      if (str_contains('How are you', 'localhost')) { 
+        //echo 'true';
+      }
+      /*
       $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"],0,5))=='https'?'https':'http';
       $sitename = explode('/', $_SERVER['PHP_SELF']);
       array_shift($sitename);
@@ -453,6 +462,10 @@ if(isset($_POST['func'])){
       $sitename = implode('/', $sitename);
       $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
       header("Location:$header_url");
+      */
+      header("Location:/resources/appod/");
+
+
 
     }
      else {
@@ -467,12 +480,13 @@ if(isset($_POST['func'])){
     function markall($id_podcast_post, $id_user){
       $conn	= db();
 
-      $query	= $conn->prepare("UPDATE episode SET status = '1' WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user'");
+      $query	= $conn->prepare("UPDATE episode SET status = '1', currenttime = '0' WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user'");
       $query->execute();
-
+      /*
       foreach($conn->query("SELECT id FROM episode WHERE id_podcast = '$id_podcast_post' AND id_user = '$id_user' ") as $row) {
         echo $row['id'].',';
       }
+      */
     }
     markall($id_podcast_post, $id_user);
 

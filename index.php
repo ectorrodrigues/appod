@@ -360,7 +360,8 @@
       });
 
       request.fail(function(jqXHR, textStatus) {
-        alert( "Request failed: " + textStatus );
+        //alert( "Request failed: " + textStatus );
+        window.location.replace("/resources/appod");
       });
 
     }
