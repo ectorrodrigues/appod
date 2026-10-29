@@ -5,9 +5,13 @@ include('vendor/simplehtmldom/simple_html_dom.php');
 
 if(isset($_GET['id_user_update'])){
   $id_user_update = $_GET['id_user_update'];
-  //echo $id_user_update; die();
-  update_podcasts($id_user_update);
+  try{
+    update_podcasts($id_user_update);
+  }catch(Exception $error){
+    error_log('Appod episode refresh failed: '.$error->getMessage());
+  }
   header("Location:https://mova.ppg.br/resources/appod/");
+  exit;
 }
 
 // UPDATE PODCASTS ------------------------------------------------------------------------------------------
@@ -15,99 +19,121 @@ if(isset($_GET['id_user_update'])){
 // ----------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------------------------------------------------------------
 function update_rss_episodes($id_podcast, $user_id){
-  
-  $conn	= db();
-  foreach($conn->query(" SELECT * FROM podcast WHERE id = '$id_podcast' ") as $row) {
-    $id_publisher = $row['id_publisher'];
-    $url = $row['url'];
+  $conn = db();
+  $podcastQuery = $conn->prepare('SELECT id_publisher, url FROM podcast WHERE id = :podcast AND id_user = :user');
+  $podcastQuery->execute(array(':podcast' => $id_podcast, ':user' => $user_id));
+  $podcast = $podcastQuery->fetch(PDO::FETCH_ASSOC);
+  if(!$podcast || empty($podcast['url'])){
+    return;
   }
 
-  $query	= $conn->prepare("SELECT url FROM podcast WHERE id = '$id_podcast' AND id_user = '$user_id' ");
-  $query->execute();
-  if($query->rowCount() > 0){
-    $url_podcast_fetch = $query->fetchColumn();
-    $url = $url_podcast_fetch;
+  $feedContext = stream_context_create(array(
+    'http' => array(
+      'timeout' => 8,
+      'user_agent' => 'Appod RSS updater'
+    )
+  ));
+  $feedContents = @file_get_contents($podcast['url'], false, $feedContext);
+  if($feedContents === false){
+    error_log('Appod episode refresh could not load feed for podcast '.$id_podcast);
+    return;
   }
 
-  //Fetching RSS Feed Data
-  $rss = simplexml_load_file("$url");
-  
-  foreach($rss->channel->item as $item){
-      $titles[] = "{$item->title}";
-      $audiourls[] = "{$item->enclosure['url']}";
-      $item_dateep = "{$item->pubDate}";
-      $finaldate = strtotime($item_dateep);
-      $finaldate = date('Y-m-d',$finaldate);
-      $dateeps[] = $finaldate;
+  $previousLibxmlState = libxml_use_internal_errors(true);
+  $rss = @simplexml_load_string($feedContents, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
+  libxml_clear_errors();
+  libxml_use_internal_errors($previousLibxmlState);
+  if($rss === false){
+    error_log('Appod episode refresh received invalid XML for podcast '.$id_podcast);
+    return;
   }
 
-  $titles = str_replace(array('\`', '\'', '\"'), ' ', $titles);
-  $arrlenght = count($titles);
-  $today = date("Y-m-d");
-  $i = 0;
+  // Accept RSS, RDF, and Atom entries, including namespaced feeds.
+  $items = $rss->xpath('//*[local-name()="item" or local-name()="entry"]');
+  if(!$items){
+    return;
+  }
 
-  for($i = 3; $i >= 0; $i-=1){
-    $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
-    $query->execute();
-    if($query->rowCount() == 0){
-      //$addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')");
-      //$addurl->execute();
-      echo $titles[$i].'  -  '.$audiourls[$i].'  -  '.$dateeps[$i].'  -  '.$today.'  -  '.$id_podcast_fetch.'  -  '.$id_publisher.'  -  '.$user_id.'<br><br>';
-    } else {
-      header("Location:https://mova.ppg.br/resources/appod/");
+  $exists = $conn->prepare('SELECT 1 FROM episode WHERE id_podcast = :podcast AND id_user = :user AND url = :url LIMIT 1');
+  $insert = $conn->prepare('INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES (:title, :url, :published, :added, :podcast, :publisher, :user, 0, 0)');
+  $today = date('Y-m-d');
+  foreach($items as $item){
+    $titleNodes = $item->xpath('./*[local-name()="title"]');
+    $title = isset($titleNodes[0]) ? trim((string)$titleNodes[0]) : '';
+    $audioUrl = '';
+    $enclosures = $item->xpath('./*[local-name()="enclosure" or local-name()="content"][@url]');
+    if($enclosures && isset($enclosures[0]['url'])){
+      $audioUrl = trim((string)$enclosures[0]['url']);
+    }
+    if($audioUrl === ''){
+      $links = $item->xpath('./*[local-name()="link"][@rel="enclosure"]');
+      if($links && isset($links[0]['href'])){
+        $audioUrl = trim((string)$links[0]['href']);
+      }
+    }
+    if($audioUrl === ''){
+      continue;
+    }
+
+    $dateNodes = $item->xpath('./*[local-name()="pubDate" or local-name()="published" or local-name()="updated" or local-name()="date"]');
+    $timestamp = isset($dateNodes[0]) ? strtotime((string)$dateNodes[0]) : false;
+    $published = $timestamp === false ? $today : date('Y-m-d', $timestamp);
+    if($title === ''){
+      $title = $audioUrl;
+    }
+
+    $exists->execute(array(':podcast' => $id_podcast, ':user' => $user_id, ':url' => $audioUrl));
+    if(!$exists->fetchColumn()){
+      $insert->execute(array(
+        ':title' => $title,
+        ':url' => $audioUrl,
+        ':published' => $published,
+        ':added' => $today,
+        ':podcast' => $id_podcast,
+        ':publisher' => $podcast['id_publisher'],
+        ':user' => $user_id
+      ));
     }
   }
-
-  $conn	= NULL;
-
 }
 
 function update_podcasts($user_id){
-
-  $podcast_arr = array();
+  // Query subscriptions directly so a podcast with no saved episodes is updated too.
   $conn = db();
-  $sql = "SELECT * FROM episode WHERE id_user = '$user_id'";
-  foreach($conn->query($sql) as $row) {
-    $podcast_title = $row['id_podcast'];
-    $podcast_arr[] = $podcast_title;
-  }
-
-  $podcast_arr = array_unique($podcast_arr);
-  $count_arr = count($podcast_arr);
-  $keys = array();
-  for($i = 0; $i < $count_arr; $i++){
-    $keys[] = $i;
-  }
-  $podcast_arr = array_values($podcast_arr);
-
-  for($i = 0; $i < $count_arr; $i++){
-    $podcast_id_fetch = $podcast_arr[$i];
-    $query 	= $conn->prepare("SELECT id_publisher FROM podcast WHERE id = '$podcast_id_fetch' AND id_user = '$user_id' ");
-    $query->execute();
-    if($query->rowCount() > 0){
-      $id_publisher = $query->fetchColumn();
-
-      $conn	= db();
-      $id_publishers_array = array();
-      foreach($conn->query(" SELECT * FROM publisher") as $row) {
-        $id_publishers_array[] = $row['id'];
-      }
-      // Add the publishers id you don't want to use the add_rss_episodes function, otherwise leave it blank
-      // eg.: $exception = ["1", "10"];
-      $exception = [""];
-      $id_publishers_array = array_diff($id_publishers_array, $exception);
-      if(in_array($id_publisher, $id_publishers_array)){
-        update_rss_episodes($podcast_id_fetch, $user_id);
-      } 
-
+  $query = $conn->prepare('SELECT id FROM podcast WHERE id_user = :user');
+  $query->execute(array(':user' => $user_id));
+  foreach($query->fetchAll(PDO::FETCH_COLUMN) as $podcastId){
+    try{
+      update_rss_episodes($podcastId, $user_id);
+    }catch(Exception $error){
+      error_log('Appod episode refresh failed for podcast '.$podcastId.': '.$error->getMessage());
     }
   }
-
 }
 
 // See if a func was sent
 if(isset($_POST['func'])){
   $func = $_POST['func'];
+
+  if($func == 'update_rss_podcast'){
+    $podcastId = isset($_POST['id_podcast']) ? filter_var($_POST['id_podcast'], FILTER_VALIDATE_INT) : false;
+    $userId = isset($_POST['user']) ? filter_var($_POST['user'], FILTER_VALIDATE_INT) : false;
+    header('Content-Type: application/json; charset=utf-8');
+    if($podcastId === false || $userId === false){
+      http_response_code(400);
+      echo json_encode(array('ok' => false));
+      exit;
+    }
+    try{
+      update_rss_episodes($podcastId, $userId);
+      echo json_encode(array('ok' => true));
+    }catch(Exception $error){
+      error_log('Appod episode refresh failed for podcast '.$podcastId.': '.$error->getMessage());
+      http_response_code(500);
+      echo json_encode(array('ok' => false));
+    }
+    exit;
+  }
 
   // LIST PODCASTS --------------------------------------------------------------------------------------------
   // ----------------------------------------------------------------------------------------------------------

@@ -32,7 +32,7 @@
       }
 
       echo '
-      <div class="podcasts_menu_items row '.$id.'" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\', \'15\')">
+      <div class="podcasts_menu_items row '.$id.'" data-podcast-id="'.$id.'" onClick="list_episodes(\''.$id.'\', \''.$id_publisher.'\', \''.$id_user.'\', \'15\')">
         <div class="col-lg-10 col-10">
           '.$title.'
         </div>
@@ -162,7 +162,7 @@
         <div class="d-inline-block ml-0 ml-lg-0 cursor-pointer openlist transition" onclick="openlist()">
           <i class="fa fa-bars mr-1" aria-hidden="true"></i>  See All
         </div>
-        <div class="d-inline-block ml-4 cursor-pointer openlist transition color666" onclick="update_episodes(<?= $user_id ?>)">
+        <div id="update_episodes_button" class="d-inline-block ml-4 cursor-pointer openlist transition color666" onclick="update_episodes(<?= $user_id ?>)">
           <i class="fa fa-refresh" aria-hidden="true"></i>
         </div>
 
@@ -333,7 +333,7 @@
           $('.'+id_podcast).show();
           $('.see-feed').show();
         }
-        
+
       });
 
       request.fail(function(jqXHR, textStatus) {
@@ -450,7 +450,40 @@
 
 
     function update_episodes(id_user){
-      window.location.href = "model.php?id_user_update="+id_user;
+      var podcastIds = $('.podcasts_menu_items').map(function(){
+        return $(this).data('podcast-id');
+      }).get();
+      var button = $('#update_episodes_button');
+      var index = 0;
+
+      if(podcastIds.length === 0){
+        window.location.reload();
+        return;
+      }
+
+      button.css('pointer-events', 'none').attr('title', 'Updating episodes...');
+      button.find('i').addClass('fa-spin');
+
+      function updateNextPodcast(){
+        if(index >= podcastIds.length){
+          window.location.reload();
+          return;
+        }
+
+        var podcastId = podcastIds[index++];
+        $.ajax({
+          url: 'model.php',
+          type: 'POST',
+          dataType: 'json',
+          timeout: 25000,
+          data: {func: 'update_rss_podcast', id_podcast: podcastId, user: id_user}
+        }).always(function(){
+          button.attr('title', 'Updating episodes ('+index+'/'+podcastIds.length+')');
+          updateNextPodcast();
+        });
+      }
+
+      updateNextPodcast();
     }
 
     function seefeed(){
