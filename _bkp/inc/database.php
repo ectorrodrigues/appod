@@ -9,7 +9,7 @@
 			$dbname		= 'appod';
 			$username	= 'root';
 			$password	= 'root';
-			$port = 3306;
+			$port = 8889;
 		} else {
 			$servername	= 'localhost';
 			$dbname		= 'appod';

@@ -7,7 +7,7 @@ if(isset($_GET['id_user_update'])){
   $id_user_update = $_GET['id_user_update'];
   //echo $id_user_update; die();
   update_podcasts($id_user_update);
-  header("Location:/resources/appod/");
+  header("Location:https://mova.ppg.br/resources/appod/");
 }
 
 // UPDATE PODCASTS ------------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ function update_rss_episodes($id_podcast, $user_id){
 
   //Fetching RSS Feed Data
   $rss = simplexml_load_file("$url");
-
+  
   foreach($rss->channel->item as $item){
       $titles[] = "{$item->title}";
       $audiourls[] = "{$item->enclosure['url']}";
@@ -50,9 +50,11 @@ function update_rss_episodes($id_podcast, $user_id){
     $query	= $conn->prepare("SELECT url FROM episode WHERE url = '$audiourls[$i]' AND id_user = '$user_id' ");
     $query->execute();
     if($query->rowCount() == 0){
-      $addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')");
-      $addurl->execute();
-      //echo $titles[$i].'  -  '.$audiourls[$i].'  -  '.$dateeps[$i].'  -  '.$today.'  -  '.$id_podcast_fetch.'  -  '.$id_publisher.'  -  '.$user_id.'<br><br>';
+      //$addurl	= $conn->prepare("INSERT INTO episode (title, url, date_publish, date_added, id_podcast, id_publisher, id_user, status, currenttime) VALUES ('$titles[$i]', '$audiourls[$i]', '$dateeps[$i]', '$today', '$id_podcast', '$id_publisher', '$user_id', '0', '0')");
+      //$addurl->execute();
+      echo $titles[$i].'  -  '.$audiourls[$i].'  -  '.$dateeps[$i].'  -  '.$today.'  -  '.$id_podcast_fetch.'  -  '.$id_publisher.'  -  '.$user_id.'<br><br>';
+    } else {
+      header("Location:https://mova.ppg.br/resources/appod/");
     }
   }
 
@@ -118,6 +120,13 @@ if(isset($_POST['func'])){
     $id_podcast_post = $_POST['id'];
     $id_user = $_POST['user'];
     $limit = $_POST['limit'];
+
+    $conn	= db();
+    $query	= $conn->prepare("SELECT title FROM podcast WHERE id = '$id_podcast_post'");
+    $query->execute();
+    $id_podcast_fetch_name = $query->fetchColumn();
+
+    echo '<h1 class="mb-0 mb-lg-3">'.$id_podcast_fetch_name.'</h1><br>';
 
     echo '
     <div class="row justify-content-end mb-3 mb-lg-0 mt-1">
@@ -270,7 +279,7 @@ if(isset($_POST['func'])){
     $sitename = implode('/', $sitename);
     $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
     */
-    header("Location:/resources/appod/");
+    header("Location:https://mova.ppg.br/resources/appod/");
 
 
   
@@ -463,7 +472,7 @@ if(isset($_POST['func'])){
       $header_url = $protocol.'://'.$_SERVER['HTTP_HOST'].'/'.$sitename;
       header("Location:$header_url");
       */
-      header("Location:/resources/appod/");
+      header("Location:https://mova.ppg.br/resources/appod/");
 
 
 
